@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETF 복리 시뮬레이터</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #555a6b;
+    --green: #22d87a;
+    --green-dim: rgba(34,216,122,0.12);
+    --green-dim2: rgba(34,216,122,0.06);
+    --red: #f05252;
+    --red-dim: rgba(240,82,82,0.1);
+    --blue: #5b8fff;
+    --blue-dim: rgba(91,143,255,0.12);
+    --amber: #f5a623;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .header {
+    padding: 48px 24px 32px;
+    max-width: 860px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(34,216,122,0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .header h1 span { color: var(--green); }
+  .header p {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* Section */
+  .section { margin-bottom: 48px; }
+  .section-header { margin-bottom: 20px; }
+  .section-header h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .section-header p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  /* ETF Tabs */
+  .etf-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .tab-btn.active {
+    background: var(--green-dim);
+    border-color: rgba(34,216,122,0.35);
+    color: var(--green);
+  }
+
+  /* ETF Info Card */
+  .etf-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .etf-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .etf-card-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .etf-card-desc { font-size: 12px; color: var(--text2); }
+  .risk-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .risk-mid { background: rgba(245,166,35,0.12); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
+  .risk-high { background: rgba(240,82,82,0.1); color: var(--red); border: 1px solid rgba(240,82,82,0.2); }
+  .etf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .etf-stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .etf-stat-val { font-size: 16px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+  .etf-stat-val.pos { color: var(--green); }
+  .etf-stat-val.neg { color: var(--red); }
+
+  /* Hist bars */
+  .hist-rows { display: flex; flex-direction: column; gap: 4px; }
+  .hist-row { display: flex; align-items: center; gap: 10px; }
+  .hist-year { font-size: 11px; color: var(--text3); min-width: 34px; text-align: right; font-family: 'JetBrains Mono', monospace; }
+  .hist-track { flex: 1; height: 14px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .hist-fill { height: 100%; border-radius: 2px; }
+  .hist-val { font-size: 11px; font-weight: 500; min-width: 52px; font-family: 'JetBrains Mono', monospace; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* Sliders */
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } .etf-stats { grid-template-columns: repeat(2, 1fr); } }
+  .control-group label { font-size: 13px; color: var(--text2); display: block; margin-bottom: 8px; }
+  .control-row { display: flex; align-items: center; gap: 10px; }
+  .control-val {
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 100px;
+    text-align: right;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 2px solid var(--bg);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  /* Result cards */
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  @media (max-width: 480px) { .result-grid { grid-template-columns: 1fr; } }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .result-card-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .result-card-val { font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+  .result-card-val.green { color: var(--green); }
+  .result-card-val.blue { color: var(--blue); }
+
+  /* Chart */
+  .chart-legend { display: flex; gap: 16px; margin-bottom: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .chart-wrap { position: relative; width: 100%; height: 280px; }
+
+  /* Insight box */
+  .insight {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--green-dim2);
+    border: 1px solid rgba(34,216,122,0.12);
+    border-left: 3px solid var(--green);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 48px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">ETF 복리 시뮬레이터</div>
+  <h1>내 월 투자금이<br><span>얼마가 될까요?</span></h1>
+  <p>S&P 500, 나스닥 100, 국내 반도체 ETF의 역사적 수익률을 기반으로 월 적립식 복리 효과를 시뮬레이션합니다.</p>
+</div>
+
+<div class="container">
+
+  <!-- ETF 선택 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>ETF 선택</h2>
+      <p>역사적 데이터를 기반으로 시뮬레이션합니다 · 과거 수익이 미래를 보장하지 않습니다</p>
+    </div>
+
+    <div class="etf-tabs" id="etf-tabs">
+      <button class="tab-btn active" data-etf="sp500">🇺🇸 S&P 500</button>
+      <button class="tab-btn" data-etf="nasdaq">🇺🇸 나스닥 100</button>
+      <button class="tab-btn" data-etf="semikr">🇰🇷 국내 반도체</button>
+      <button class="tab-btn" data-etf="kospi">🇰🇷 KOSPI 200</button>
+    </div>
+
+    <div class="etf-card">
+      <div class="etf-card-top">
+        <div>
+          <div class="etf-card-name" id="etf-name">S&P 500 ETF (SPY / TIGER 미국S&P500)</div>
+          <div class="etf-card-desc" id="etf-desc">미국 대형주 500개 기업 추종 · 1993년 최초 상장</div>
+        </div>
+        <span class="risk-badge risk-mid" id="etf-risk">중간 위험</span>
+      </div>
+      <div class="etf-stats">
+        <div><div class="etf-stat-label">30년 연평균</div><div class="etf-stat-val pos" id="r30">10.1%</div></div>
+        <div><div class="etf-stat-label">20년 연평균</div><div class="etf-stat-val pos" id="r20">11.8%</div></div>
+        <div><div class="etf-stat-label">10년 연평균</div><div class="etf-stat-val pos" id="r10">15.6%</div></div>
+        <div><div class="etf-stat-label">최대 단년 하락</div><div class="etf-stat-val neg" id="rdd">-38.5%</div></div>
+      </div>
+    </div>
+
+    <!-- 연도별 바 차트 -->
+    <div class="section-header" style="margin-bottom:12px;">
+      <h2>연도별 수익률 (최근 20년)</h2>
+      <p id="hist-note">S&P 500 기준, 배당 재투자 포함</p>
+    </div>
+    <div class="hist-rows" id="hist-bars"></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 시뮬레이터 -->
+  <div class="section">
+    <div class="section-header">
+      <h2>월 적립식 투자 시뮬레이터</h2>
+      <p>매월 일정 금액을 ETF에 투자했을 때의 복리 효과를 계산합니다</p>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>월 투자금액</label>
+        <div class="control-row">
+          <input type="range" id="monthly" min="100000" max="3000000" step="50000" value="500000">
+          <span class="control-val" id="monthly-out">₩500,000</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>투자 기간</label>
+        <div class="control-row">
+          <input type="range" id="sim-years" min="1" max="40" step="1" value="20">
+          <span class="control-val" id="sim-years-out">20년</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>예상 연 수익률</label>
+        <div class="control-row">
+          <input type="range" id="sim-rate" min="1" max="25" step="0.5" value="10">
+          <span class="control-val" id="sim-rate-out">10.0%</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>연 납입 증가율</label>
+        <div class="control-row">
+          <input type="range" id="increase" min="0" max="10" step="0.5" value="0">
+          <span class="control-val" id="increase-out">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-card-label">총 투자 원금</div>
+        <div class="result-card-val" id="res-principal">-</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-label">복리 수익</div>
+        <div class="result-card-val green" id="res-gain">-</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-label">최종 평가금액</div>
+        <div class="result-card-val blue" id="res-total">-</div>
+      </div>
+    </div>
+
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#2a5a3a;"></div>원금 누계</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22d87a;"></div>복리 수익</div>
+    </div>
+    <div class="chart-wrap"><canvas id="sim-chart"></canvas></div>
+
+    <div class="insight" id="insight-text"></div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 본 시뮬레이션은 역사적 데이터를 기반으로 한 참고용 계산이며, 미래 수익을 보장하지 않습니다.
+    실제 투자 결과는 시장 상황, 환율, 세금, 수수료 등에 따라 크게 달라질 수 있습니다.
+    투자에는 원금 손실 위험이 있으며, 투자 결정 전 충분한 조사와 전문가 상담을 권장합니다.
+  </div>
+
+</div>
+
+<script>
+const ETF = {
+  sp500: {
+    name: 'S&P 500 ETF (SPY / TIGER 미국S&P500)',
+    desc: '미국 대형주 500개 기업 추종 · 1993년 최초 상장',
+    risk: '중간 위험', riskClass: 'risk-mid',
+    r30:'10.1%', r20:'11.8%', r10:'15.6%', maxdd:'-38.5%',
+    defaultRate: 10,
+    note: 'S&P 500 기준, 배당 재투자 포함',
+    years:[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    returns:[4.9,15.8,5.5,-37.0,26.5,15.1,2.1,16.0,32.4,13.7,1.4,12.0,21.8,-4.4,31.5,18.4,28.7,-18.1,26.3,23.3]
+  },
+  nasdaq: {
+    name: '나스닥 100 ETF (QQQ / TIGER 미국나스닥100)',
+    desc: '미국 기술주 중심 100개 기업 추종 · 변동성 높음',
+    risk: '높은 위험', riskClass: 'risk-high',
+    r30:'14.2%', r20:'14.8%', r10:'19.5%', maxdd:'-54.0%',
+    defaultRate: 14,
+    note: '나스닥 100 지수 기준, 배당 재투자 포함',
+    years:[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    returns:[2.1,7.0,19.0,-41.7,55.0,20.0,3.0,18.1,37.0,19.2,9.5,6.8,33.0,-0.1,39.0,48.6,27.3,-32.6,54.9,24.9]
+  },
+  semikr: {
+    name: '국내 반도체 ETF (KODEX 반도체 / TIGER 반도체)',
+    desc: '삼성전자·SK하이닉스 중심 국내 반도체주 추종',
+    risk: '높은 위험', riskClass: 'risk-high',
+    r30:'N/A', r20:'약 8%', r10:'약 12%', maxdd:'-50%+',
+    defaultRate: 12,
+    note: 'KODEX 반도체 ETF 및 KRX반도체지수 추정 기준',
+    years:[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    returns:[52.0,8.0,28.0,-53.0,72.0,24.0,-12.0,16.0,15.0,-4.0,-8.0,10.0,42.0,-22.0,22.0,45.0,38.0,-38.0,32.0,-20.0]
+  },
+  kospi: {
+    name: 'KOSPI ETF (KODEX 200 / TIGER 코스피200)',
+    desc: '코스피 200대 기업 추종 · 삼성전자 비중 높음',
+    risk: '중간 위험', riskClass: 'risk-mid',
+    r30:'약 7%', r20:'약 6%', r10:'약 5%', maxdd:'-42.0%',
+    defaultRate: 7,
+    note: 'KOSPI 200 지수 기준, 배당 재투자 포함',
+    years:[2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    returns:[54.0,4.0,32.0,-40.0,50.0,22.0,-11.0,9.0,1.0,-4.8,2.4,3.3,22.0,-17.3,7.7,30.8,4.0,-24.9,19.8,-8.0]
+  }
+};
+
+function fmtKRW(n) {
+  if (n >= 100000000) return '₩' + (n/100000000).toFixed(1) + '억';
+  if (n >= 10000) return '₩' + Math.round(n/10000).toLocaleString('ko-KR') + '만';
+  return '₩' + Math.round(n).toLocaleString('ko-KR');
+}
+
+let simChart = null;
+
+function renderBars(etf) {
+  const cont = document.getElementById('hist-bars');
+  cont.innerHTML = '';
+  const maxAbs = Math.max(...etf.returns.map(Math.abs));
+  etf.years.forEach((yr, i) => {
+    const r = etf.returns[i];
+    const pct = Math.abs(r) / maxAbs * 100;
+    const color = r >= 0 ? '#22d87a' : '#f05252';
+    const row = document.createElement('div');
+    row.className = 'hist-row';
+    row.innerHTML = `
+      <span class="hist-year">${yr}</span>
+      <div class="hist-track"><div class="hist-fill" style="width:${pct}%;background:${color};opacity:0.8;"></div></div>
+      <span class="hist-val" style="color:${color};">${r>0?'+':''}${r.toFixed(1)}%</span>
+    `;
+    cont.appendChild(row);
+  });
+}
+
+function calcSim() {
+  const monthly = parseFloat(document.getElementById('monthly').value);
+  const years = parseInt(document.getElementById('sim-years').value);
+  const rate = parseFloat(document.getElementById('sim-rate').value) / 100;
+  const increase = parseFloat(document.getElementById('increase').value) / 100;
+
+  document.getElementById('monthly-out').textContent = '₩' + monthly.toLocaleString('ko-KR');
+  document.getElementById('sim-years-out').textContent = years + '년';
+  document.getElementById('sim-rate-out').textContent = (rate*100).toFixed(1) + '%';
+  document.getElementById('increase-out').textContent = (increase*100).toFixed(1) + '%';
+
+  const monthlyRate = rate / 12;
+  let total = 0, principal = 0, cur = monthly;
+  const pArr = [0], gArr = [0], labels = ['0년'];
+
+  for (let y = 1; y <= years; y++) {
+    for (let m = 0; m < 12; m++) {
+      total = (total + cur) * (1 + monthlyRate);
+      principal += cur;
+    }
+    if (y < years) cur *= (1 + increase);
+    pArr.push(Math.round(principal));
+    gArr.push(Math.round(total - principal));
+    labels.push(y + '년');
+  }
+
+  document.getElementById('res-principal').textContent = fmtKRW(principal);
+  document.getElementById('res-gain').textContent = fmtKRW(total - principal);
+  document.getElementById('res-total').textContent = fmtKRW(total);
+
+  const gainRatio = ((total - principal) / principal * 100).toFixed(0);
+  const doubleYear = Math.round(72 / (rate * 100));
+  document.getElementById('insight-text').textContent =
+    `${years}년 후 원금 대비 복리 수익 ${gainRatio}%. ` +
+    `72의 법칙 기준 현재 수익률(${(rate*100).toFixed(1)}%)에서 투자금이 2배가 되는 데 약 ${doubleYear}년 소요.`;
+
+  if (simChart) simChart.destroy();
+  simChart = new Chart(document.getElementById('sim-chart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: '원금 누계', data: pArr, backgroundColor: '#2a5a3a', stack: 'a' },
+        { label: '복리 수익', data: gArr, backgroundColor: '#22d87a', stack: 'a' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmtKRW(ctx.raw) } } },
+      scales: {
+        x: { stacked: true, ticks: { color: '#555a6b', font: { size: 11 }, autoSkip: true, maxTicksLimit: 10 }, grid: { display: false } },
+        y: { stacked: true, ticks: { color: '#555a6b', font: { size: 11 }, callback: v => fmtKRW(v) }, grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+}
+
+function switchEtf(key) {
+  const e = ETF[key];
+  document.getElementById('etf-name').textContent = e.name;
+  document.getElementById('etf-desc').textContent = e.desc;
+  const risk = document.getElementById('etf-risk');
+  risk.textContent = e.risk;
+  risk.className = 'risk-badge ' + e.riskClass;
+  document.getElementById('r30').textContent = e.r30;
+  document.getElementById('r20').textContent = e.r20;
+  document.getElementById('r10').textContent = e.r10;
+  document.getElementById('rdd').textContent = e.maxdd;
+  document.getElementById('hist-note').textContent = e.note;
+  document.getElementById('sim-rate').value = e.defaultRate;
+  renderBars(e);
+  calcSim();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    switchEtf(btn.dataset.etf);
+  });
+});
+
+['monthly','sim-years','sim-rate','increase'].forEach(id => {
+  document.getElementById(id).addEventListener('input', calcSim);
+});
+
+switchEtf('sp500');
+</script>
+</body>
+</html>
