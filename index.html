@@ -19,7 +19,7 @@
 *,*::before,*::after{box-sizing:border-box;}
 /* 모든 모노스페이스 폰트에서 슬래시드 제로 비활성화 */
 .etf-ticker,.stat-val,.ctrl-val,.result-val,.hist-val,.hist-yr,.leg-dot,
-[style*="monospace"],[style*=Consolas,"Courier New"],
+[style*="monospace"],[style*="Noto Sans Mono"],
 input[type="text"],input[type="number"]{
   font-variant-numeric: normal;
   font-feature-settings: "zero" 0, "ss01" 0;
@@ -46,7 +46,7 @@ html{overflow-x:hidden;}
 .etf-item:hover{border-color:var(--border2);}
 .etf-item.selected{border-color:rgba(34,216,122,.5);background:rgba(34,216,122,0.05);}
 .etf-item.selected::after{content:'✓';position:absolute;top:10px;right:12px;font-size:12px;color:var(--green);font-weight:700;}
-.etf-ticker{font-size:13px;font-weight:700;color:var(--text);font-family:Consolas,'Courier New',monospace;margin-bottom:3px;padding-right:18px;}
+.etf-ticker{font-size:13px;font-weight:700;color:var(--text);font-family:'Noto Sans Mono',monospace;margin-bottom:3px;padding-right:18px;}
 .etf-name{font-size:11px;color:var(--text2);margin-bottom:7px;line-height:1.4;}
 .etf-tags{display:flex;flex-wrap:wrap;gap:4px;}
 .tag{padding:1px 6px;border-radius:3px;font-size:10px;font-weight:500;}
@@ -64,7 +64,7 @@ html{overflow-x:hidden;}
 .risk-vhigh{background:rgba(240,82,82,.2);color:#ff6b6b;border:1px solid rgba(240,82,82,.4);}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .stat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px;}
-.stat-val{font-size:15px;font-weight:600;font-family:Consolas,'Courier New',monospace;}
+.stat-val{font-size:15px;font-weight:600;font-family:'Noto Sans Mono',monospace;}
 .pos{color:var(--green);}.neg{color:var(--red);}
 
 /* Hist bars */
@@ -74,10 +74,10 @@ html{overflow-x:hidden;}
 .hist-row{display:flex;align-items:center;gap:8px;cursor:default;border-radius:4px;padding:2px 0;transition:background .1s;}
 .hist-row.has-event{cursor:pointer;}
 .hist-row.has-event:hover{background:rgba(255,255,255,0.03);}
-.hist-yr{font-size:11px;color:var(--text3);min-width:34px;text-align:right;font-family:Consolas,'Courier New',monospace;}
+.hist-yr{font-size:11px;color:var(--text3);min-width:34px;text-align:right;font-family:'Noto Sans Mono',monospace;}
 .hist-track{flex:1;height:13px;background:var(--surface2);border-radius:2px;overflow:hidden;}
 .hist-fill{height:100%;border-radius:2px;}
-.hist-val{font-size:11px;font-weight:500;min-width:52px;font-family:Consolas,'Courier New',monospace;}
+.hist-val{font-size:11px;font-weight:500;min-width:52px;font-family:'Noto Sans Mono',monospace;}
 .hist-event-icon{font-size:11px;min-width:16px;text-align:center;}
 
 /* Event popup */
@@ -95,13 +95,13 @@ html{overflow-x:hidden;}
 @media(max-width:560px){.controls{grid-template-columns:1fr;}.stats-row{grid-template-columns:repeat(2,1fr);}.result-grid{grid-template-columns:1fr;}}
 .ctrl-lbl{font-size:12px;color:var(--text2);display:block;margin-bottom:7px;}
 .ctrl-row{display:flex;align-items:center;gap:10px;}
-.ctrl-val{font-size:13px;font-weight:600;min-width:100px;text-align:right;font-family:Consolas,'Courier New',monospace;}
+.ctrl-val{font-size:13px;font-weight:600;min-width:100px;text-align:right;font-family:'Noto Sans Mono',monospace;}
 input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--surface2);outline:none;cursor:pointer;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);border:2px solid var(--bg);cursor:pointer;}
 .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
 .result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
 .result-lbl{font-size:11px;color:var(--text2);margin-bottom:5px;}
-.result-val{font-size:19px;font-weight:700;font-family:Consolas,'Courier New',monospace;letter-spacing:-.02em;}
+.result-val{font-size:19px;font-weight:700;font-family:'Noto Sans Mono',monospace;letter-spacing:-.02em;}
 .chart-legend{display:flex;gap:16px;margin-bottom:8px;}
 .leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
 .leg-dot{width:10px;height:10px;border-radius:2px;}
@@ -118,7 +118,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .tax-综합-btn.active{background:rgba(240,82,82,.1);border-color:rgba(240,82,82,.3);color:var(--red);}
 .pf-slot{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);flex-wrap:wrap;}
 .pf-select{flex:2;min-width:120px;padding:6px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:inherit;}
-.pf-pct{width:56px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;text-align:center;font-family:Consolas,'Courier New',monospace;}
+.pf-pct{width:56px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;text-align:center;font-family:'Noto Sans Mono',monospace;}
 .pf-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;}
 .pf-del:hover{color:var(--red);}
 .cmp-select{width:100%;min-width:0;padding:8px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:12px;font-family:inherit;overflow:hidden;text-overflow:ellipsis;}
@@ -152,7 +152,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div id="fx-box" style="display:none;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:4px 10px;">
         <span style="font-size:11px;color:var(--text3);">USD/KRW</span>
         <input type="number" id="fx-rate" value="1380" min="100" max="3000" step="10"
-          style="width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:Consolas,'Courier New',monospace;text-align:center;">
+          style="width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:'Noto Sans Mono',monospace;text-align:center;">
       </div>
       <button id="lang-ko" class="lang-btn active" onclick="setLang('ko')">한국어</button>
       <button id="lang-en" class="lang-btn" onclick="setLang('en')">English</button>
@@ -168,7 +168,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-etf-select-h">ETF 선택</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-selected-lbl" style="font-size:11px;color:var(--text3);">선택됨</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="badge-etf-select">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="badge-etf-select">SPY / VOO</span>
         </div>
       </div>
       <p id="sec-etf-select-p">카드를 클릭해서 원하는 ETF를 선택하세요 · 📌 표시된 연도는 클릭하면 사건 설명이 나옵니다</p>
@@ -207,7 +207,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-hist-h">연도별 수익률 (최근 20년)</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="badge-etf-hist">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="badge-etf-hist">SPY / VOO</span>
         </div>
       </div>
       <p id="hist-note"></p>
@@ -222,7 +222,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-divyield-h">연도별 배당수익률</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="badge-etf-divyield">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="badge-etf-divyield">SPY / VOO</span>
         </div>
       </div>
       <p id="sec-divyield-p">주가 대비 연간 배당금 비율</p>
@@ -239,7 +239,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-bt-h">📊 백테스팅 — 실제 역사로 시뮬레이션</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="bt-etf-label">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="bt-etf-label">SPY / VOO</span>
         </div>
       </div>
       <p id="sec-bt-p">위에서 선택한 ETF의 실제 연도별 수익률 데이터로 계산합니다.</p>
@@ -300,7 +300,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-goal-h">🎯 목표금액 역산 계산기</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="goal-etf-label">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="goal-etf-label">SPY / VOO</span>
         </div>
       </div>
       <p id="sec-goal-p">위에서 선택한 ETF의 수익률이 자동으로 반영됩니다</p>
@@ -313,13 +313,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <button class="goal-preset" data-val="500000000" id="btn-goal-500m">5억</button>
           <button class="goal-preset" data-val="1000000000" id="btn-goal-1b">10억</button>
         </div>
-        <input type="text" id="goal-amount" value="100,000,000" min="1000000" step="1000000" style="margin-top:8px;width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:Consolas,'Courier New',monospace;" inputmode="numeric" placeholder="100,000,000">
+        <input type="text" id="goal-amount" value="100,000,000" min="1000000" step="1000000" style="margin-top:8px;width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:'Noto Sans Mono',monospace;" inputmode="numeric" placeholder="100,000,000">
         <div style="font-size:12px;color:var(--green);margin-top:4px;" id="goal-amount-display">₩1억</div>
       </div>
       <div>
         <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:12px;">
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px;" id="lbl-goal-etf-applied">선택 ETF 수익률 (자동 반영)</div>
-          <div style="font-size:20px;font-weight:700;font-family:Consolas,'Courier New',monospace;color:var(--green);" id="goal-rate-display">10.0%</div>
+          <div style="font-size:20px;font-weight:700;font-family:'Noto Sans Mono',monospace;color:var(--green);" id="goal-rate-display">10.0%</div>
           <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="goal-etf-name-display">S&P 500 ETF</div>
         </div>
         <div><label class="ctrl-lbl" id="lbl-goal-calc-mode">계산 방식</label>
@@ -356,7 +356,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <h2 style="margin:0;" id="sec-sim-h">월 적립식 투자 시뮬레이터</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
           <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
-          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:Consolas,'Courier New',monospace;" id="badge-etf-sim">SPY / VOO</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'Noto Sans Mono',monospace;" id="badge-etf-sim">SPY / VOO</span>
         </div>
       </div>
       <p id="sec-sim-p">매월 일정 금액을 ETF에 투자했을 때의 복리 효과를 계산합니다</p>
@@ -522,11 +522,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
         <div>
           <div style="font-size:11px;color:var(--text3);" id="lbl-tax-compare-tax">세금 차이</div>
-          <div style="font-size:18px;font-weight:700;font-family:Consolas,'Courier New',monospace;" id="tax-compare-tax">-</div>
+          <div style="font-size:18px;font-weight:700;font-family:'Noto Sans Mono',monospace;" id="tax-compare-tax">-</div>
         </div>
         <div>
           <div style="font-size:11px;color:var(--text3);" id="lbl-tax-compare-after">실수령 차이</div>
-          <div style="font-size:18px;font-weight:700;font-family:Consolas,'Courier New',monospace;" id="tax-compare-after">-</div>
+          <div style="font-size:18px;font-weight:700;font-family:'Noto Sans Mono',monospace;" id="tax-compare-after">-</div>
         </div>
         <div id="tax-compare-badge" style="margin-left:auto;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;"></div>
       </div>
@@ -562,7 +562,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
           <canvas id="pf-donut"></canvas>
           <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">
             <div style="font-size:11px;color:var(--text3);" id="lbl-pf-donut-sum">합계</div>
-            <div style="font-size:18px;font-weight:700;font-family:Consolas,'Courier New',monospace;" id="pf-donut-total-pct">100%</div>
+            <div style="font-size:18px;font-weight:700;font-family:'Noto Sans Mono',monospace;" id="pf-donut-total-pct">100%</div>
           </div>
         </div>
         <div id="pf-donut-legend" style="display:flex;flex-direction:column;gap:5px;width:100%;"></div>
@@ -1934,9 +1934,9 @@ function calcPf(){
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <div style="width:10px;height:10px;border-radius:50%;background:${PF_COLORS[i]};flex-shrink:0;"></div>
-        <span style="font-size:11px;color:var(--text2);font-family:Consolas,'Courier New',monospace;">${e?e.ticker:'?'}</span>
+        <span style="font-size:11px;color:var(--text2);font-family:'Noto Sans Mono',monospace;">${e?e.ticker:'?'}</span>
       </div>
-      <span style="font-size:12px;font-weight:600;color:${PF_COLORS[i]};font-family:Consolas,'Courier New',monospace;">${slot.pct}%</span>
+      <span style="font-size:12px;font-weight:600;color:${PF_COLORS[i]};font-family:'Noto Sans Mono',monospace;">${slot.pct}%</span>
     </div>`).join('');
 
   if(pfDonut)pfDonut.destroy();
@@ -2019,7 +2019,7 @@ function calcPf(){
             position:absolute;right:4px;top:${pct}%;
             transform:translateY(-50%);
             font-size:${fontSize}px;font-weight:700;
-            font-family:Consolas,'Courier New',monospace;
+            font-family:'Noto Sans Mono',monospace;
             color:${color};white-space:nowrap;
             background:rgba(13,15,20,0.75);
             padding:2px 5px;border-radius:4px;
@@ -2379,7 +2379,7 @@ function calcCmp(){
         if(!val) return;
         const ret=((val-principal)/principal*100).toFixed(1);
         ctx.save();
-        ctx.font='bold 11px Consolas,"Courier New",monospace';
+        ctx.font='bold 11px "Noto Sans Mono",monospace';
         ctx.fillStyle=ds.borderColor;
         ctx.textAlign='left';
         ctx.textBaseline='middle';
@@ -2409,9 +2409,9 @@ function calcCmp(){
     <div class="result-card" style="border-color:${color}33;">
       <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:${color};">${e?e.ticker:'?'}</div>
       <div class="stat-lbl">${t('cmp-final')}</div>
-      <div style="font-size:17px;font-weight:700;font-family:Consolas,'Courier New',monospace;color:${color};margin-bottom:6px;">${fmtMoney(finalTotal)}</div>
+      <div style="font-size:17px;font-weight:700;font-family:'Noto Sans Mono',monospace;color:${color};margin-bottom:6px;">${fmtMoney(finalTotal)}</div>
       <div class="stat-lbl">${t('cmp-return')}</div>
-      <div style="font-size:13px;font-weight:600;font-family:Consolas,'Courier New',monospace;color:var(--green);">+${((finalTotal-principal)/principal*100).toFixed(1)}%</div>
+      <div style="font-size:13px;font-weight:600;font-family:'Noto Sans Mono',monospace;color:var(--green);">+${((finalTotal-principal)/principal*100).toFixed(1)}%</div>
       <div style="margin-top:6px;font-size:11px;color:var(--text3);">${currentLang==='en'?`Avg ${e?e.rate:8}% assumed`:`연평균 ${e?e.rate:8}% 가정`}</div>
     </div>`).join('');
 }
