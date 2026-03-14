@@ -16,13 +16,15 @@
   --red:#f05252;--blue:#5b8fff;--amber:#f5a623;--purple:#a78bfa;
   --radius:10px;--radius-lg:16px;
 }
-body{font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
+*,*::before,*::after{box-sizing:border-box;}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden;}
+html{overflow-x:hidden;}
 .header{padding:48px 24px 32px;max-width:900px;margin:0 auto;border-bottom:1px solid var(--border);margin-bottom:40px;}
 .header-tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);background:var(--green-dim);border:1px solid rgba(34,216,122,.2);border-radius:4px;padding:4px 10px;margin-bottom:16px;}
 .header h1{font-size:clamp(26px,5vw,40px);font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:10px;}
 .header h1 span{color:var(--green);}
 .header p{font-size:14px;color:var(--text2);line-height:1.7;max-width:560px;}
-.container{max-width:900px;margin:0 auto;padding:0 24px;}
+.container{max-width:900px;margin:0 auto;padding:0 24px 0 24px;}
 .section{margin-bottom:48px;}
 .section-header{margin-bottom:16px;}
 .section-header h2{font-size:16px;font-weight:600;}
@@ -99,28 +101,64 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .chart-wrap{position:relative;width:100%;height:280px;}
 .insight{margin-top:14px;padding:13px 15px;background:rgba(34,216,122,0.05);border:1px solid rgba(34,216,122,.1);border-left:3px solid var(--green);border-radius:var(--radius);font-size:13px;color:var(--text2);line-height:1.6;}
 .disclaimer{margin-top:48px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);font-size:11px;color:var(--text3);line-height:1.7;}
-.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
-.leg-dot{width:10px;height:10px;border-radius:2px;}
+.goal-preset{padding:5px 12px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.goal-preset:hover,.goal-preset.active{background:var(--green-dim);border-color:rgba(34,216,122,.35);color:var(--green);}
+.goal-mode-btn{padding:6px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.goal-mode-btn.active{background:var(--green-dim);border-color:rgba(34,216,122,.35);color:var(--green);}
+.tax-type-btn{padding:6px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.tax-type-btn.active{background:rgba(91,143,255,.12);border-color:rgba(91,143,255,.35);color:var(--blue);}
+.tax-综합-btn{flex:1;padding:6px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.tax-综합-btn.active{background:rgba(240,82,82,.1);border-color:rgba(240,82,82,.3);color:var(--red);}
+.pf-slot{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);flex-wrap:wrap;}
+.pf-select{flex:2;min-width:120px;padding:6px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:inherit;}
+.pf-pct{width:56px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;text-align:center;font-family:'JetBrains Mono',monospace;}
+.pf-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;}
+.pf-del:hover{color:var(--red);}
+.cmp-select{width:100%;min-width:0;padding:8px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:12px;font-family:inherit;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:600px){.pf-grid{grid-template-columns:1fr!important;}}
+.lang-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;}
+.lang-btn.active{background:var(--green-dim);border-color:rgba(34,216,122,.35);color:var(--green);}
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="header-tag">ETF 복리 시뮬레이터</div>
-  <h1>내 월 투자금이<br><span>얼마가 될까요?</span></h1>
-  <p>지수·배당·귀금속·에너지·원자재·채권·테마 ETF 24종. 연도별 바를 클릭하면 그 해의 이야기를 알 수 있어요.</p>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+    <div class="header-tag" data-i18n="header-tag">ETF 복리 시뮬레이터</div>
+    <!-- 언어 토글 -->
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <div id="fx-box" style="display:none;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:4px 10px;">
+        <span style="font-size:11px;color:var(--text3);">USD/KRW</span>
+        <input type="number" id="fx-rate" value="1380" min="100" max="3000" step="10"
+          style="width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:center;">
+      </div>
+      <button id="lang-ko" class="lang-btn active" onclick="setLang('ko')">한국어</button>
+      <button id="lang-en" class="lang-btn" onclick="setLang('en')">English</button>
+    </div>
+  </div>
+  <h1 data-i18n="header-h1">내 월 투자금이<br><span>얼마가 될까요?</span></h1>
+  <p data-i18n="header-desc">지수·배당·귀금속·에너지·원자재·채권·테마 ETF 24종. 연도별 바를 클릭하면 그 해의 이야기를 알 수 있어요.</p>
 </div>
 <div class="container">
   <div class="section">
-    <div class="section-header"><h2>ETF 선택</h2><p>카드를 클릭해서 원하는 ETF를 선택하세요 · 📌 표시된 연도는 클릭하면 사건 설명이 나옵니다</p></div>
+    <div class="section-header">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <h2 style="margin:0;" id="sec-etf-select-h">ETF 선택</h2>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
+          <span class="badge-selected-lbl" style="font-size:11px;color:var(--text3);">선택됨</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="badge-etf-select">SPY / VOO</span>
+        </div>
+      </div>
+      <p id="sec-etf-select-p">카드를 클릭해서 원하는 ETF를 선택하세요 · 📌 표시된 연도는 클릭하면 사건 설명이 나옵니다</p>
+    </div>
     <div class="cat-tabs" id="cat-tabs">
-      <button class="cat-btn active" data-cat="all">전체</button>
-      <button class="cat-btn" data-cat="index">📈 지수</button>
-      <button class="cat-btn" data-cat="dividend">💰 배당</button>
-      <button class="cat-btn" data-cat="precious">🥇 귀금속</button>
-      <button class="cat-btn" data-cat="energy">🛢 에너지</button>
-      <button class="cat-btn" data-cat="material">🔩 원자재</button>
-      <button class="cat-btn" data-cat="bond">🏦 채권</button>
-      <button class="cat-btn" data-cat="theme">🚀 테마</button>
+      <button class="cat-btn active" data-cat="all" id="btn-cat-all">전체</button>
+      <button class="cat-btn" data-cat="index" id="btn-cat-index">📈 지수</button>
+      <button class="cat-btn" data-cat="dividend" id="btn-cat-dividend">💰 배당</button>
+      <button class="cat-btn" data-cat="precious" id="btn-cat-precious">🥇 귀금속</button>
+      <button class="cat-btn" data-cat="energy" id="btn-cat-energy">🛢 에너지</button>
+      <button class="cat-btn" data-cat="material" id="btn-cat-material">🔩 원자재</button>
+      <button class="cat-btn" data-cat="bond" id="btn-cat-bond">🏦 채권</button>
+      <button class="cat-btn" data-cat="theme" id="btn-cat-theme">🚀 테마</button>
     </div>
     <div class="cat-intro" id="cat-intro"></div>
     <div class="etf-grid" id="etf-grid"></div>
@@ -132,22 +170,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <span class="risk-badge" id="d-risk"></span>
     </div>
     <div class="stats-row">
-      <div><div class="stat-lbl">30년 연평균</div><div class="stat-val pos" id="d-r30"></div></div>
-      <div><div class="stat-lbl">20년 연평균</div><div class="stat-val pos" id="d-r20"></div></div>
-      <div><div class="stat-lbl">10년 연평균</div><div class="stat-val pos" id="d-r10"></div></div>
-      <div><div class="stat-lbl">최대 단년 하락</div><div class="stat-val neg" id="d-dd"></div></div>
+      <div><div class="stat-lbl" id="lbl-stat-r30">30년 연평균</div><div class="stat-val pos" id="d-r30"></div></div>
+      <div><div class="stat-lbl" id="lbl-stat-r20">20년 연평균</div><div class="stat-val pos" id="d-r20"></div></div>
+      <div><div class="stat-lbl" id="lbl-stat-r10">10년 연평균</div><div class="stat-val pos" id="d-r10"></div></div>
+      <div><div class="stat-lbl" id="lbl-stat-dd">최대 단년 하락</div><div class="stat-val neg" id="d-dd"></div></div>
     </div>
   </div>
 
   <!-- 연도별 수익률 -->
   <div class="hist-section">
-    <div class="section-header" style="margin-bottom:10px;"><h2>연도별 수익률 (최근 20년)</h2><p id="hist-note"></p></div>
+    <div class="section-header" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+        <h2 style="margin:0;" id="sec-hist-h">연도별 수익률 (최근 20년)</h2>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
+          <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="badge-etf-hist">SPY / VOO</span>
+        </div>
+      </div>
+      <p id="hist-note"></p>
+    </div>
     <div class="hist-rows" id="hist-bars"></div>
   </div>
 
   <!-- 배당률 차트 (배당 ETF만 표시) -->
   <div class="dividend-section" id="div-section" style="display:none;">
-    <div class="section-header" style="margin-bottom:10px;"><h2>연도별 배당수익률</h2><p>주가 대비 연간 배당금 비율</p></div>
+    <div class="section-header" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+        <h2 style="margin:0;" id="sec-divyield-h">연도별 배당수익률</h2>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
+          <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="badge-etf-divyield">SPY / VOO</span>
+        </div>
+      </div>
+      <p id="sec-divyield-p">주가 대비 연간 배당금 비율</p>
+    </div>
     <div class="div-chart-wrap"><canvas id="div-chart"></canvas></div>
   </div>
 
@@ -157,41 +213,41 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <div class="section">
     <div class="section-header">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
-        <h2 style="margin:0;">📊 백테스팅 — 실제 역사로 시뮬레이션</h2>
+        <h2 style="margin:0;" id="sec-bt-h">📊 백테스팅 — 실제 역사로 시뮬레이션</h2>
         <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
-          <span style="font-size:11px;color:var(--text3);">적용 중</span>
+          <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
           <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="bt-etf-label">SPY / VOO</span>
         </div>
       </div>
-      <p>위에서 선택한 ETF의 실제 연도별 수익률 데이터로 계산합니다.</p>
+      <p id="sec-bt-p">위에서 선택한 ETF의 실제 연도별 수익률 데이터로 계산합니다.</p>
     </div>
     <div class="controls">
-      <div><label class="ctrl-lbl">월 투자금액</label><div class="ctrl-row"><input type="range" id="bt-monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="bt-monthly-out"></span></div></div>
-      <div><label class="ctrl-lbl">투자 시작 연도</label><div class="ctrl-row"><input type="range" id="bt-start" min="2005" max="2020" step="1" value="2010"><span class="ctrl-val" id="bt-start-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-bt-monthly">월 투자금액</label><div class="ctrl-row"><input type="range" id="bt-monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="bt-monthly-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-bt-start">투자 시작 연도</label><div class="ctrl-row"><input type="range" id="bt-start" min="2005" max="2020" step="1" value="2010"><span class="ctrl-val" id="bt-start-out"></span></div></div>
     </div>
     <div class="result-grid" style="grid-template-columns:repeat(4,1fr);">
-      <div class="result-card"><div class="result-lbl">총 투자 원금</div><div class="result-val" id="bt-principal"></div></div>
-      <div class="result-card"><div class="result-lbl">명목 평가금액</div><div class="result-val" style="color:var(--green);" id="bt-nominal"></div></div>
-      <div class="result-card"><div class="result-lbl">실질 평가금액 <span style="font-size:10px;color:var(--text3);">(물가 반영)</span></div><div class="result-val" style="color:var(--blue);" id="bt-real"></div></div>
-      <div class="result-card"><div class="result-lbl">누적 수익률</div><div class="result-val" id="bt-rate" style="color:var(--amber);"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-bt-principal">총 투자 원금</div><div class="result-val" id="bt-principal"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-bt-nominal">명목 평가금액</div><div class="result-val" style="color:var(--green);" id="bt-nominal"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-bt-real">실질 평가금액 <span style="font-size:10px;color:var(--text3);">(물가 반영)</span></div><div class="result-val" style="color:var(--blue);" id="bt-real"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-bt-rate">누적 수익률</div><div class="result-val" id="bt-rate" style="color:var(--amber);"></div></div>
     </div>
     <div class="result-card" id="bt-div-card" style="display:none;margin-bottom:20px;border-color:rgba(34,216,122,.3);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-        <span style="font-size:13px;font-weight:600;color:var(--green);">💰 배당금 상세</span>
-        <span style="font-size:11px;color:var(--text3);">같은 기간 받은 배당금 추정</span>
+        <span style="font-size:13px;font-weight:600;color:var(--green);" id="lbl-div-detail-title">💰 배당금 상세</span>
+        <span style="font-size:11px;color:var(--text3);" id="lbl-div-detail-sub">같은 기간 받은 배당금 추정</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        <div><div class="stat-lbl">누적 배당금 수령</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-total"></div></div>
-        <div><div class="stat-lbl">연평균 배당금</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-annual"></div></div>
-        <div><div class="stat-lbl">평균 배당수익률</div><div class="stat-val" style="color:var(--amber);font-size:18px;" id="bt-div-yield"></div></div>
+        <div><div class="stat-lbl" id="lbl-div-cumul">누적 배당금 수령</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-total"></div></div>
+        <div><div class="stat-lbl" id="lbl-div-annual">연평균 배당금</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-annual"></div></div>
+        <div><div class="stat-lbl" id="lbl-div-yield-avg">평균 배당수익률</div><div class="stat-val" style="color:var(--amber);font-size:18px;" id="bt-div-yield"></div></div>
       </div>
     </div>
     <div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;" id="bt-legend">
-      <div class="leg-item"><div class="leg-dot" style="background:#2a5a3a;"></div>원금 누계</div>
-      <div class="leg-item" id="bt-leg-div" style="display:none;"><div class="leg-dot" style="background:#f5a623;"></div>배당 수익</div>
-      <div class="leg-item" id="bt-leg-cap"><div class="leg-dot" style="background:#22d87a;"></div>수익 (명목)</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#5b8fff;"></div>실질 평가금액 (물가 반영)</div>
-      <div class="leg-item"><div class="leg-dot" style="background:rgba(240,82,82,0.5);border:1px solid #f05252;"></div>연간 물가상승률</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2a5a3a;"></div><span id="lbl-leg-principal2">원금 누계</span></div>
+      <div class="leg-item" id="bt-leg-div" style="display:none;"><div class="leg-dot" style="background:#f5a623;"></div><span id="lbl-leg-div2">배당 수익</span></div>
+      <div class="leg-item" id="bt-leg-cap"><div class="leg-dot" style="background:#22d87a;"></div><span id="lbl-leg-cap">수익 (명목)</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5b8fff;"></div><span id="lbl-leg-real">실질 평가금액 (물가 반영)</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(240,82,82,0.5);border:1px solid #f05252;"></div><span id="lbl-leg-cpi">연간 물가상승률</span></div>
     </div>
     <div class="chart-wrap" style="height:320px;"><canvas id="bt-chart"></canvas></div>
     <div class="insight" id="bt-insight" style="margin-top:14px;"></div>
@@ -200,93 +256,632 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <hr class="divider">
 
   <div class="section">
-    <div class="section-header"><h2>월 적립식 투자 시뮬레이터</h2><p>매월 일정 금액을 ETF에 투자했을 때의 복리 효과를 계산합니다</p></div>
+    <div class="section-header">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <h2 style="margin:0;" id="sec-sim-h">월 적립식 투자 시뮬레이터</h2>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
+          <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="badge-etf-sim">SPY / VOO</span>
+        </div>
+      </div>
+      <p id="sec-sim-p">매월 일정 금액을 ETF에 투자했을 때의 복리 효과를 계산합니다</p>
+    </div>
     <div class="controls">
-      <div><label class="ctrl-lbl">월 투자금액</label><div class="ctrl-row"><input type="range" id="monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="monthly-out"></span></div></div>
-      <div><label class="ctrl-lbl">투자 기간</label><div class="ctrl-row"><input type="range" id="sim-years" min="1" max="40" step="1" value="20"><span class="ctrl-val" id="sim-years-out"></span></div></div>
-      <div><label class="ctrl-lbl">예상 연 수익률</label><div class="ctrl-row"><input type="range" id="sim-rate" min="1" max="30" step="0.5" value="10"><span class="ctrl-val" id="sim-rate-out"></span></div></div>
-      <div><label class="ctrl-lbl">연 납입 증가율</label><div class="ctrl-row"><input type="range" id="increase" min="0" max="10" step="0.5" value="0"><span class="ctrl-val" id="increase-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-monthly">월 투자금액</label><div class="ctrl-row"><input type="range" id="monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="monthly-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-years">투자 기간</label><div class="ctrl-row"><input type="range" id="sim-years" min="1" max="40" step="1" value="20"><span class="ctrl-val" id="sim-years-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-rate">예상 연 수익률</label><div class="ctrl-row"><input type="range" id="sim-rate" min="1" max="30" step="0.5" value="10"><span class="ctrl-val" id="sim-rate-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-increase">연 납입 증가율</label><div class="ctrl-row"><input type="range" id="increase" min="0" max="10" step="0.5" value="0"><span class="ctrl-val" id="increase-out"></span></div></div>
     </div>
     <div class="result-grid">
-      <div class="result-card"><div class="result-lbl">총 투자 원금</div><div class="result-val" id="res-principal"></div></div>
-      <div class="result-card"><div class="result-lbl">복리 수익</div><div class="result-val" style="color:var(--green);" id="res-gain"></div></div>
-      <div class="result-card"><div class="result-lbl">최종 평가금액</div><div class="result-val" style="color:var(--blue);" id="res-total"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-res-principal">총 투자 원금</div><div class="result-val" id="res-principal"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-res-gain">복리 수익</div><div class="result-val" style="color:var(--green);" id="res-gain"></div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-res-total">최종 평가금액</div><div class="result-val" style="color:var(--blue);" id="res-total"></div></div>
     </div>
     <div class="chart-legend">
-      <div class="leg-item"><div class="leg-dot" style="background:#2a5a3a;"></div>원금 누계</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#22d87a;"></div>복리 수익</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2a5a3a;"></div><span id="lbl-leg-principal">원금 누계</span></div>
+      <div class="leg-item"><div class="leg-dot" style="background:#22d87a;"></div><span id="lbl-leg-div">복리 수익</span></div>
     </div>
     <div class="chart-wrap"><canvas id="sim-chart"></canvas></div>
     <div class="insight" id="insight"></div>
     <!-- 배당 ETF 전용 카드 -->
     <div class="result-card" id="sim-div-card" style="display:none;margin-top:16px;border-color:rgba(34,216,122,.3);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-        <span style="font-size:13px;font-weight:600;color:var(--green);">💰 배당금 상세 (설정 기간 기준)</span>
+        <span style="font-size:13px;font-weight:600;color:var(--green);" id="lbl-sim-div-title">💰 배당금 상세 (설정 기간 기준)</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;">
         <div class="result-card" style="margin:0;">
-          <div class="result-lbl">예상 연간 배당금</div>
+          <div class="result-lbl" id="lbl-sim-div-annual">예상 연간 배당금</div>
           <div class="result-val" style="color:var(--green);font-size:18px;" id="sim-div-annual"></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px;">최종 평가금액 기준</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="lbl-sim-div-annual-sub">최종 평가금액 기준</div>
         </div>
         <div class="result-card" style="margin:0;">
-          <div class="result-lbl">예상 월 배당금</div>
+          <div class="result-lbl" id="lbl-sim-div-monthly">예상 월 배당금</div>
           <div class="result-val" style="color:var(--green);font-size:18px;" id="sim-div-monthly"></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px;">매달 통장에 들어오는 금액</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="lbl-sim-div-monthly-sub">매달 통장에 들어오는 금액</div>
         </div>
       </div>
       <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:14px;">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">1주당 배당금 & 보유 주수 추정</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px;" id="lbl-sim-dps-title">1주당 배당금 & 보유 주수 추정</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-          <div><div class="stat-lbl">현재 주가 (달러)</div><div class="stat-val" style="font-size:14px;" id="sim-share-price"></div></div>
-          <div><div class="stat-lbl">연간 1주당 배당금</div><div class="stat-val pos" style="font-size:14px;" id="sim-dps"></div></div>
-          <div><div class="stat-lbl">예상 보유 주수</div><div class="stat-val" style="font-size:14px;color:var(--blue);" id="sim-shares"></div></div>
+          <div><div class="stat-lbl" id="lbl-sim-price">현재 주가 (달러)</div><div class="stat-val" style="font-size:14px;" id="sim-share-price"></div></div>
+          <div><div class="stat-lbl" id="lbl-sim-dps">연간 1주당 배당금</div><div class="stat-val pos" style="font-size:14px;" id="sim-dps"></div></div>
+          <div><div class="stat-lbl" id="lbl-sim-shares">예상 보유 주수</div><div class="stat-val" style="font-size:14px;color:var(--blue);" id="sim-shares"></div></div>
         </div>
       </div>
       <!-- 연도별 배당금 성장 차트 -->
       <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <span style="font-size:12px;color:var(--text3);">📈 연도별 1주당 배당금(DPS) 역사적 추이</span>
+          <span style="font-size:12px;color:var(--text3);" id="lbl-sim-dps-chart-title">📈 연도별 1주당 배당금(DPS) 역사적 추이</span>
           <div style="display:flex;gap:12px;">
-            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:#22d87a;display:inline-block;"></span>1주당 배당금 (DPS)</span>
-            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,0.7);display:inline-block;"></span>전년 대비 증가율</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:#22d87a;display:inline-block;"></span><span id="lbl-sim-dps-leg1">1주당 배당금 (DPS)</span></span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,0.7);display:inline-block;"></span><span id="lbl-sim-dps-leg2">전년 대비 증가율</span></span>
           </div>
         </div>
         <div style="position:relative;width:100%;height:220px;"><canvas id="div-growth-chart"></canvas></div>
       </div>
     </div>
   </div>
-  <div class="disclaimer">※ 본 시뮬레이션은 역사적 데이터를 기반으로 한 참고용 계산이며, 미래 수익을 보장하지 않습니다. 실제 투자 결과는 시장 상황, 환율, 세금, 수수료에 따라 크게 달라질 수 있습니다.</div>
+  <hr class="divider">
+
+  <!-- ① 포트폴리오 분산 시뮬레이터 -->
+  <div class="section">
+    <div class="section-header"><h2 id="sec-pf-h">🗂 포트폴리오 분산 시뮬레이터</h2><p id="sec-pf-p">여러 ETF를 비율로 나눠 투자했을 때 합산 수익률을 계산합니다</p></div>
+    <div id="portfolio-slots" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+    <button id="pf-add-btn" style="padding:7px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;margin-bottom:20px;"><span id="lbl-pf-add">+ ETF 추가 (최대 5개)</span></button>
+    <button id="pf-reset-btn" style="display:none;padding:7px 16px;border-radius:var(--radius);border:1px solid rgba(240,82,82,.35);background:rgba(240,82,82,.08);color:#f05252;font-size:12px;cursor:pointer;font-family:inherit;margin-bottom:20px;margin-left:8px;" id="pf-reset-btn"><span id="lbl-pf-reset">↺ 리셋</span></button>
+    <div class="controls" style="margin-bottom:16px;">
+      <div><label class="ctrl-lbl" id="lbl-pf-monthly">월 투자금액</label><div class="ctrl-row"><input type="range" id="pf-monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="pf-monthly-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-pf-years">투자 기간</label><div class="ctrl-row"><input type="range" id="pf-years" min="1" max="40" step="1" value="20"><span class="ctrl-val" id="pf-years-out"></span></div></div>
+    </div>
+    <div class="result-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+      <div class="result-card"><div class="result-lbl" id="lbl-pf-principal">총 투자 원금</div><div class="result-val" id="pf-principal">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-pf-total">최종 평가금액</div><div class="result-val" style="color:var(--green);" id="pf-total">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-pf-rate">총 수익률</div><div class="result-val" style="color:var(--amber);" id="pf-rate">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-pf-cagr">포트폴리오 연평균</div><div class="result-val" style="color:var(--blue);" id="pf-cagr">-</div></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;" id="pf-legend"></div>
+    <!-- 차트 2개: 도넛 + 수익 라인 -->
+    <div class="pf-grid" style="display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center;">
+      <!-- 도넛 차트 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="font-size:12px;color:var(--text3);" id="lbl-pf-ratio">비율 구성</div>
+        <div style="position:relative;width:180px;height:180px;">
+          <canvas id="pf-donut"></canvas>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">
+            <div style="font-size:11px;color:var(--text3);" id="lbl-pf-donut-sum">합계</div>
+            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;" id="pf-donut-total-pct">100%</div>
+          </div>
+        </div>
+        <div id="pf-donut-legend" style="display:flex;flex-direction:column;gap:5px;width:100%;"></div>
+      </div>
+      <!-- 수익 라인 차트 -->
+      <div style="position:relative;">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px;" id="lbl-pf-growth">기간별 자산 성장</div>
+        <div style="position:relative;width:100%;height:280px;">
+          <canvas id="pf-chart"></canvas>
+          <div id="pf-end-labels" style="position:absolute;top:0;right:0;bottom:0;width:80px;pointer-events:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ② 목표금액 역산 계산기 -->
+  <div class="section">
+    <div class="section-header">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <h2 style="margin:0;" id="sec-goal-h">🎯 목표금액 역산 계산기</h2>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 12px;background:var(--green-dim);border:1px solid rgba(34,216,122,.3);border-radius:20px;">
+          <span class="badge-applied-lbl" style="font-size:11px;color:var(--text3);">적용 중</span>
+          <span style="font-size:12px;font-weight:600;color:var(--green);font-family:'JetBrains Mono',monospace;" id="goal-etf-label">SPY / VOO</span>
+        </div>
+      </div>
+      <p id="sec-goal-p">위에서 선택한 ETF의 수익률이 자동으로 반영됩니다</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div><label class="ctrl-lbl" id="lbl-goal-amount">목표 금액</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="goal-preset" data-val="100000000" id="btn-goal-100m">1억</button>
+          <button class="goal-preset" data-val="300000000" id="btn-goal-300m">3억</button>
+          <button class="goal-preset" data-val="500000000" id="btn-goal-500m">5억</button>
+          <button class="goal-preset" data-val="1000000000" id="btn-goal-1b">10억</button>
+        </div>
+        <input type="number" id="goal-amount" value="100000000" min="1000000" step="1000000" style="margin-top:8px;width:100%;padding:8px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:inherit;">
+        <div style="font-size:12px;color:var(--green);margin-top:4px;" id="goal-amount-display">₩1억</div>
+      </div>
+      <div>
+        <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:12px;">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;" id="lbl-goal-etf-applied">선택 ETF 수익률 (자동 반영)</div>
+          <div style="font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green);" id="goal-rate-display">10.0%</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;" id="goal-etf-name-display">S&P 500 ETF</div>
+        </div>
+        <div><label class="ctrl-lbl" id="lbl-goal-calc-mode">계산 방식</label>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="goal-mode-btn active" data-mode="monthly" id="btn-goal-monthly" style="flex:1;">월납입 → 기간</button>
+            <button class="goal-mode-btn" data-mode="period" id="btn-goal-period" style="flex:1;">기간 → 월납입</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="goal-input-monthly" style="margin-bottom:16px;"><label class="ctrl-lbl" id="lbl-goal-monthly">월 투자금액</label><div class="ctrl-row"><input type="range" id="goal-monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="goal-monthly-out">₩500,000</span></div></div>
+    <div id="goal-input-period" style="display:none;margin-bottom:16px;"><label class="ctrl-lbl" id="lbl-goal-period">투자 기간</label><div class="ctrl-row"><input type="range" id="goal-period" min="1" max="40" step="1" value="20"><span class="ctrl-val" id="goal-period-out">20년</span></div></div>
+    <div class="result-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="result-card" style="border-color:rgba(34,216,122,.3);">
+        <div class="result-lbl" id="goal-res-label">목표 달성까지</div>
+        <div class="result-val" style="color:var(--green);font-size:22px;" id="goal-res-main">-</div>
+      </div>
+      <div class="result-card"><div class="result-lbl" id="lbl-goal-res-principal">총 투자 원금</div><div class="result-val" id="goal-res-principal">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-goal-res-gain">복리 수익</div><div class="result-val" style="color:var(--amber);" id="goal-res-gain">-</div></div>
+      <div class="result-card" id="goal-shares-card" style="display:none;border-color:rgba(91,143,255,.3);">
+        <div class="result-lbl" id="lbl-goal-shares">목표 달성 시 보유 주수</div>
+        <div class="result-val" style="color:var(--blue);font-size:18px;" id="goal-res-shares">-</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="goal-res-price-per-share">주가 기준</div>
+      </div>
+    </div>
+    <div class="insight" id="goal-insight" style="margin-top:14px;"></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ③ 세금 반영 계산기 -->
+  <div class="section">
+    <div class="section-header"><h2 id="sec-tax-h">🧾 세후 실수령 계산기</h2><p id="sec-tax-p">배당소득세·양도세 등을 반영한 실제 수령액을 계산합니다</p></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;" id="lbl-tax-type">투자 유형 선택</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="tax-type-btn active" data-type="us-etf">🇺🇸 미국 ETF</button>
+        <button class="tax-type-btn" data-type="kr-etf">🇰🇷 국내 ETF</button>
+        <button class="tax-type-btn" data-type="isa">💚 ISA 계좌</button>
+        <button class="tax-type-btn" data-type="pension">🏦 연금저축</button>
+      </div>
+      <div id="tax-info-box" style="padding:12px 14px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:16px;"></div>
+      <div class="controls">
+        <div><label class="ctrl-lbl" id="lbl-tax-total">최종 평가금액 (세전)</label><div class="ctrl-row"><input type="range" id="tax-total" min="10000000" max="2000000000" step="10000000" value="100000000"><span class="ctrl-val" id="tax-total-out"></span></div></div>
+        <div><label class="ctrl-lbl" id="lbl-tax-principal">총 투자 원금</label><div class="ctrl-row"><input type="range" id="tax-principal" min="10000000" max="1000000000" step="10000000" value="60000000"><span class="ctrl-val" id="tax-principal-out"></span></div></div>
+        <div><label class="ctrl-lbl" id="lbl-tax-div">배당금 수령액 (연간)</label><div class="ctrl-row"><input type="range" id="tax-div" min="0" max="50000000" step="500000" value="3000000"><span class="ctrl-val" id="tax-div-out"></span></div></div>
+        <div><label class="ctrl-lbl" id="lbl-tax-综합">종합소득 합산 여부</label>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="tax-综합-btn active" data-val="n" id="btn-tax-separate">분리과세</button>
+            <button class="tax-综합-btn" data-val="y" id="btn-tax-comprehensive">종합과세</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="result-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px;">
+      <div class="result-card"><div class="result-lbl" id="lbl-tax-gain">세전 수익</div><div class="result-val" id="tax-gain-before">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-tax-amount">납부 세금 (추정)</div><div class="result-val" style="color:var(--red);" id="tax-amount">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-tax-after">세후 실수령</div><div class="result-val" style="color:var(--green);" id="tax-after">-</div></div>
+      <div class="result-card"><div class="result-lbl" id="lbl-tax-rate">실효세율</div><div class="result-val" style="color:var(--amber);" id="tax-rate">-</div></div>
+    </div>
+    <!-- 기준 대비 절세/증세 비교 -->
+    <div id="tax-compare-box" style="display:none;padding:12px 16px;background:var(--surface2);border-radius:var(--radius);margin-bottom:12px;border:1px solid var(--border2);">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;" id="lbl-tax-compare-title">미국 ETF 분리과세 대비</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+        <div>
+          <div style="font-size:11px;color:var(--text3);" id="lbl-tax-compare-tax">세금 차이</div>
+          <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;" id="tax-compare-tax">-</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);" id="lbl-tax-compare-after">실수령 차이</div>
+          <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;" id="tax-compare-after">-</div>
+        </div>
+        <div id="tax-compare-badge" style="margin-left:auto;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;"></div>
+      </div>
+    </div>
+    </div>
+    <div class="insight" id="tax-insight"></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ④ ETF 비교 -->
+  <div class="section">
+    <div class="section-header"><h2 id="sec-cmp-h">⚖️ ETF 비교</h2><p id="sec-cmp-p">같은 조건에서 최대 3개 ETF를 나란히 비교합니다</p></div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px;" id="cmp-selects"></div>
+    <div class="controls" style="margin-bottom:16px;">
+      <div><label class="ctrl-lbl" id="lbl-cmp-monthly">월 투자금액</label><div class="ctrl-row"><input type="range" id="cmp-monthly" min="100000" max="3000000" step="50000" value="500000"><span class="ctrl-val" id="cmp-monthly-out"></span></div></div>
+      <div><label class="ctrl-lbl" id="lbl-cmp-years">투자 기간</label><div class="ctrl-row"><input type="range" id="cmp-years" min="1" max="40" step="1" value="20"><span class="ctrl-val" id="cmp-years-out"></span></div></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;" id="cmp-legend"></div>
+    <div style="position:relative;width:100%;height:280px;"><canvas id="cmp-chart"></canvas></div>
+    <div id="cmp-cards" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px;"></div>
+  </div>
+
+  <div class="disclaimer" id="lbl-disclaimer">※ 본 시뮬레이션은 역사적 데이터를 기반으로 한 참고용 계산이며, 미래 수익을 보장하지 않습니다. 세금 계산은 일반적인 기준이며 개인 상황에 따라 달라질 수 있습니다. 투자 결정 전 전문가 상담을 권장합니다.</div>
 </div>
 
 <script>
+// =============================================
+// 다국어 지원 (i18n)
+// =============================================
+const I18N = {
+  ko: {
+    'header-tag': 'ETF 복리 시뮬레이터',
+    'header-h1': '내 월 투자금이<br><span>얼마가 될까요?</span>',
+    'header-desc': '지수·배당·귀금속·에너지·원자재·채권·테마 ETF 24종. 연도별 바를 클릭하면 그 해의 이야기를 알 수 있어요.',
+    // 섹션 제목
+    's-etf-select': 'ETF 선택',
+    's-etf-select-sub': '카드를 클릭해서 원하는 ETF를 선택하세요 · 📌 표시된 연도는 클릭하면 사건 설명이 나옵니다',
+    's-hist': '연도별 수익률 (최근 20년)',
+    's-divyield': '연도별 배당수익률',
+    's-divyield-sub': '주가 대비 연간 배당금 비율',
+    's-bt': '📊 백테스팅 — 실제 역사로 시뮬레이션',
+    's-bt-sub': '위에서 선택한 ETF의 실제 연도별 수익률 데이터로 계산합니다.',
+    's-sim': '월 적립식 투자 시뮬레이터',
+    's-sim-sub': '매월 일정 금액을 ETF에 투자했을 때의 복리 효과를 계산합니다',
+    's-pf': '🗂 포트폴리오 분산 시뮬레이터',
+    's-pf-sub': '여러 ETF를 비율로 나눠 투자했을 때 합산 수익률을 계산합니다',
+    's-goal': '🎯 목표금액 역산 계산기',
+    's-goal-sub': '위에서 선택한 ETF의 수익률이 자동으로 반영됩니다',
+    's-tax': '🧾 세후 실수령 계산기',
+    's-tax-sub': '배당소득세·양도세 등을 반영한 실제 수령액을 계산합니다',
+    's-cmp': '⚖️ ETF 비교',
+    's-cmp-sub': '같은 조건에서 최대 3개 ETF를 나란히 비교합니다',
+    // 뱃지
+    'badge-selected': '선택됨',
+    'badge-applied': '적용 중',
+    // 컨트롤
+    'ctrl-monthly': '월 투자금액',
+    'ctrl-years': '투자 기간',
+    'ctrl-rate': '예상 연 수익률',
+    'ctrl-increase': '연 납입 증가율',
+    'ctrl-start': '투자 시작 연도',
+    // 결과 카드
+    'res-principal': '총 투자 원금',
+    'res-gain': '복리 수익',
+    'res-total': '최종 평가금액',
+    'res-nominal': '명목 평가금액',
+    'res-real': '실질 평가금액',
+    'res-rate': '누적 수익률',
+    // 범례
+    'leg-principal': '원금 누계',
+    'leg-div': '배당 수익',
+    'leg-cap': '주가 차익',
+    'leg-real': '실질 평가금액 (물가 반영)',
+    'leg-cpi': '연간 물가상승률',
+    // 기타
+    'pf-add': '+ ETF 추가 (최대 5개)',
+    'pf-reset': '↺ 리셋',
+    'pf-ratio': '비율 구성',
+    'pf-growth': '기간별 자산 성장',
+    // 포트폴리오 결과카드
+    'pf-principal-lbl':'총 투자 원금','pf-total-lbl':'최종 평가금액',
+    // 백테스팅 원금
+    'bt-principal-lbl':'총 투자 원금',
+    // 목표금액 섹션 제목 (한국어)
+    'goal-section-h':'🎯 목표금액 역산 계산기',
+    'goal-section-p':'위에서 선택한 ETF의 수익률이 자동으로 반영됩니다','cat-index':'📈 지수','cat-dividend':'💰 배당','cat-precious':'🥇 귀금속',
+    'cat-energy':'🛢 에너지','cat-material':'🔩 원자재','cat-bond':'🏦 채권','cat-theme':'🚀 테마',
+    'goal-100m':'1억','goal-300m':'3억','goal-500m':'5억','goal-1b':'10억',
+    'unit-year':'년','unit-month':'개월','unit-shares':'주','unit-from':'년부터',
+    'cmp-final':'최종 금액','cmp-return':'수익률','cmp-assumption':'연평균 % 가정',
+    'pf-ok-sum':'✓ 합계 100%','pf-warn-sum':'합계 %가 100%가 되어야 합니다',
+    // ETF 상세 카드
+    'stat-r30': '30년 연평균', 'stat-r20': '20년 연평균', 'stat-r10': '10년 연평균', 'stat-dd': '최대 단년 하락',
+    // 배당 상세
+    'div-detail-title': '💰 배당금 상세', 'div-detail-sub': '같은 기간 받은 배당금 추정',
+    'div-cumul': '누적 배당금 수령', 'div-annual': '연평균 배당금', 'div-yield-avg': '평균 배당수익률',
+    'sim-div-title': '💰 배당금 상세 (설정 기간 기준)',
+    'sim-div-annual': '예상 연간 배당금', 'sim-div-annual-sub': '최종 평가금액 기준',
+    'sim-div-monthly': '예상 월 배당금', 'sim-div-monthly-sub': '매달 통장에 들어오는 금액',
+    'sim-dps-title': '1주당 배당금 & 보유 주수 추정',
+    'sim-price-lbl': '현재 주가 (달러)', 'sim-dps-lbl': '연간 1주당 배당금', 'sim-shares-lbl': '예상 보유 주수',
+    'sim-dps-chart-title': '📈 연도별 1주당 배당금(DPS) 역사적 추이',
+    'sim-dps-leg1': '1주당 배당금 (DPS)', 'sim-dps-leg2': '전년 대비 증가율',
+    // 포트폴리오
+    'pf-principal': '총 투자 원금', 'pf-total': '최종 평가금액', 'pf-rate': '총 수익률', 'pf-cagr': '포트폴리오 연평균',
+    'pf-donut-sum': '합계',
+    // 목표
+    'goal-amount-lbl': '목표 금액', 'goal-calc-mode': '계산 방식',
+    'goal-mode-monthly': '월납입 → 기간', 'goal-mode-period': '기간 → 월납입',
+    'goal-res-label': '목표 달성까지', 'goal-res-principal': '총 투자 원금', 'goal-res-gain': '복리 수익',
+    'goal-shares-lbl': '목표 달성 시 보유 주수',
+    'goal-etf-applied': '선택 ETF 수익률 (자동 반영)',
+    // 세금
+    'tax-type-lbl': '투자 유형 선택',
+    'tax-total-lbl': '최종 평가금액 (세전)', 'tax-principal-lbl': '총 투자 원금', 'tax-div-lbl': '배당금 수령액 (연간)',
+    'tax-综합-lbl': '종합소득 합산 여부',
+    'tax-separate': '분리과세', 'tax-comprehensive': '종합과세',
+    'tax-gain-lbl': '세전 수익', 'tax-amount-lbl': '납부 세금 (추정)', 'tax-after-lbl': '세후 실수령', 'tax-rate-lbl': '실효세율',
+    'tax-compare-title': '미국 ETF 분리과세 대비',
+    'tax-compare-tax': '세금 차이', 'tax-compare-after': '실수령 차이',
+    'tax-saving': '💚 절세', 'tax-extra': '🔴 증세', 'tax-same': '동일',
+    // 비교
+    'cmp-etf1': 'ETF 1', 'cmp-etf2': 'ETF 2', 'cmp-etf3': 'ETF 3',
+    'cmp-principal': '총 투자 원금', 'cmp-total': '최종 금액', 'cmp-rate': '수익률',
+  },
+  en: {
+    'header-tag': 'ETF Compound Simulator',
+    'header-h1': 'How much will your<br><span>monthly investment grow?</span>',
+    'header-desc': '24 ETFs across index, dividend, gold, energy, materials, bonds & themes. Click any year bar to see what happened.',
+    's-etf-select': 'Select ETF',
+    's-etf-select-sub': 'Click a card to select an ETF · 📌 Years with events are clickable',
+    's-hist': 'Annual Returns (Last 20 Years)',
+    's-divyield': 'Annual Dividend Yield by Year',
+    's-divyield-sub': 'Annual dividend as % of share price',
+    's-bt': '📊 Backtesting — Real Historical Data',
+    's-bt-sub': 'Calculated using actual annual return data for the selected ETF.',
+    's-sim': 'Monthly DCA Simulator',
+    's-sim-sub': 'Calculate the compound effect of investing a fixed amount each month',
+    's-pf': '🗂 Portfolio Allocation Simulator',
+    's-pf-sub': 'Calculate combined returns when splitting investment across multiple ETFs',
+    's-goal': '🎯 Goal Amount Calculator',
+    's-goal-sub': 'Automatically uses the selected ETF\'s return rate',
+    's-tax': '🧾 After-Tax Returns Calculator',
+    's-tax-sub': 'Calculates actual take-home amount after dividend tax and capital gains tax',
+    's-cmp': '⚖️ ETF Comparison',
+    's-cmp-sub': 'Compare up to 3 ETFs side by side under the same conditions',
+    'badge-selected': 'Selected',
+    'badge-applied': 'Applied',
+    'ctrl-monthly': 'Monthly Investment',
+    'ctrl-years': 'Investment Period',
+    'ctrl-rate': 'Expected Annual Return',
+    'ctrl-increase': 'Annual Contribution Increase',
+    'ctrl-start': 'Start Year',
+    'res-principal': 'Total Principal',
+    'res-gain': 'Compound Gain',
+    'res-total': 'Final Value',
+    'res-nominal': 'Nominal Value',
+    'res-real': 'Real Value',
+    'res-rate': 'Total Return',
+    'leg-principal': 'Principal',
+    'leg-div': 'Dividend Income',
+    'leg-cap': 'Capital Gains',
+    'leg-real': 'Real Value (inflation-adj.)',
+    'leg-cpi': 'Annual Inflation Rate',
+    'pf-add': '+ Add ETF (max 5)',
+    'pf-reset': '↺ Reset',
+    'pf-ratio': 'Allocation',
+    'pf-growth': 'Portfolio Growth',
+    'disclaimer': '※ This simulation is for reference only based on historical data and does not guarantee future returns. Tax calculations are general estimates and may vary by individual circumstances. Consult a professional before making investment decisions.',
+    // Portfolio result cards
+    'pf-principal-lbl':'Total Principal','pf-total-lbl':'Final Value',
+    'bt-principal-lbl':'Total Principal',
+    // Goal section
+    'goal-section-h':'🎯 Goal Amount Calculator',
+    'goal-section-p':'Automatically uses the selected ETF\'s return rate',
+    // Category tabs
+    'cat-all':'All','cat-index':'📈 Index','cat-dividend':'💰 Dividend','cat-precious':'🥇 Precious Metals',
+    'cat-energy':'🛢 Energy','cat-material':'🔩 Materials','cat-bond':'🏦 Bonds','cat-theme':'🚀 Theme',
+    'goal-100m':'₩100M','goal-300m':'₩300M','goal-500m':'₩500M','goal-1b':'₩1B',
+    'unit-year':'y','unit-month':'m','unit-shares':' shares','unit-from':' from',
+    'cmp-final':'Final Value','cmp-return':'Return','cmp-assumption':'Avg % assumed',
+    'pf-ok-sum':'✓ Total 100%','pf-warn-sum':'Total must equal 100%',
+    // ETF detail card
+    'stat-r30': '30Y Avg', 'stat-r20': '20Y Avg', 'stat-r10': '10Y Avg', 'stat-dd': 'Max Annual Drop',
+    // Dividend detail
+    'div-detail-title': '💰 Dividend Details', 'div-detail-sub': 'Estimated dividends over same period',
+    'div-cumul': 'Total Dividends Received', 'div-annual': 'Avg Annual Dividend', 'div-yield-avg': 'Avg Dividend Yield',
+    'sim-div-title': '💰 Dividend Details (Simulation Period)',
+    'sim-div-annual': 'Est. Annual Dividend', 'sim-div-annual-sub': 'Based on final portfolio value',
+    'sim-div-monthly-lbl': 'Est. Monthly Dividend', 'sim-div-monthly-sub': 'Monthly cash to your account',
+    'sim-dps-title': 'Est. Shares & DPS',
+    'sim-price-lbl': 'Current Price (USD)', 'sim-dps-lbl': 'Annual DPS', 'sim-shares-lbl': 'Est. Shares Held',
+    'sim-dps-chart-title': '📈 Historical DPS Trend (per share)',
+    'sim-dps-leg1': 'Dividend Per Share (DPS)', 'sim-dps-leg2': 'YoY Growth Rate',
+    // Portfolio
+    'pf-principal': 'Total Principal', 'pf-total': 'Final Value', 'pf-rate': 'Total Return', 'pf-cagr': 'Portfolio CAGR',
+    'pf-donut-sum': 'Total',
+    // Goal
+    'goal-amount-lbl': 'Target Amount', 'goal-calc-mode': 'Calculation Mode',
+    'goal-mode-monthly': 'Monthly → Period', 'goal-mode-period': 'Period → Monthly',
+    'goal-res-label': 'Time to Goal', 'goal-res-principal-lbl': 'Total Principal', 'goal-res-gain-lbl': 'Compound Gain',
+    'goal-shares-lbl': 'Est. Shares at Goal', 'goal-etf-applied': 'Selected ETF Return (auto)',
+    // Tax
+    'tax-type-lbl': 'Account Type',
+    'tax-total-lbl': 'Final Value (pre-tax)', 'tax-principal-lbl': 'Total Principal', 'tax-div-lbl': 'Annual Dividend Income',
+    'tax-综합-lbl': 'Tax Treatment',
+    'tax-separate': 'Withholding Tax', 'tax-comprehensive': 'Comprehensive Tax',
+    'tax-gain-lbl': 'Pre-Tax Gain', 'tax-amount-lbl': 'Est. Tax Owed', 'tax-after-lbl': 'After-Tax Amount', 'tax-rate-lbl': 'Effective Tax Rate',
+    'tax-compare-title': 'vs. US ETF Withholding Tax',
+    'tax-compare-tax': 'Tax Difference', 'tax-compare-after': 'Take-home Difference',
+    'tax-saving': '💚 Tax Savings', 'tax-extra': '🔴 Extra Tax', 'tax-same': 'Same',
+    // Comparison
+    'cmp-etf1': 'ETF 1', 'cmp-etf2': 'ETF 2', 'cmp-etf3': 'ETF 3',
+  }
+};
+
+let currentLang = 'ko';
+
+// 짧은 번역 헬퍼
+function t(key){ return (I18N[currentLang]||I18N['ko'])[key]||key; }
+
+// TAX_INFO — setLang보다 먼저 선언 (TDZ 방지)
+const TAX_INFO={
+  'us-etf':{
+    label:{ko:'🇺🇸 미국 ETF (해외주식)', en:'🇺🇸 US ETF (Foreign Stocks)'},
+    desc:{
+      ko:'• 배당소득세: 미국 원천징수 15% (한미조세협약)\n• 매매차익 양도세: 250만원 공제 후 22% (지방세 포함)\n• 금융소득종합과세: 배당+이자 연 2,000만원 초과 시 종합과세\n• 환차익: 비과세',
+      en:'• Dividend Tax: 15% US withholding (Korea-US tax treaty)\n• Capital Gains Tax: 22% after ₩2.5M exemption (incl. local tax)\n• Comprehensive Tax: applies when dividend+interest > ₩20M/year\n• Currency Gains: tax-exempt'
+    },
+    divTax:0.15, gainTax:0.22, gainExempt:2500000, comprehensive:2000000
+  },
+  'kr-etf':{
+    label:{ko:'🇰🇷 국내 ETF', en:'🇰🇷 Korean ETF'},
+    desc:{
+      ko:'• 배당소득세: 15.4% (지방세 포함)\n• 매매차익: 배당소득세 15.4%로 과세\n• 금융소득종합과세: 연 2,000만원 초과 시 종합과세',
+      en:'• Dividend Tax: 15.4% (incl. local tax)\n• Capital Gains: taxed as dividend income at 15.4%\n• Comprehensive Tax: applies when total financial income > ₩20M/year'
+    },
+    divTax:0.154, gainTax:0.154, gainExempt:0, comprehensive:2000000
+  },
+  'isa':{
+    label:{ko:'💚 ISA 계좌 (개인종합자산관리)', en:'💚 ISA Account'},
+    desc:{
+      ko:'• 일반형: 200만원 비과세, 초과분 9.9% 분리과세\n• 서민형/농어민: 400만원 비과세, 초과분 9.9% 분리과세\n• 의무가입기간: 3년\n• 연간 납입한도: 2,000만원 (총 1억원)',
+      en:'• General: ₩2M tax-free, 9.9% separate tax on excess\n• Low-income/Farmer: ₩4M tax-free, 9.9% on excess\n• Minimum holding period: 3 years\n• Annual contribution limit: ₩20M (total ₩100M)'
+    },
+    divTax:0, gainTax:0.099, gainExempt:2000000, comprehensive:999999999
+  },
+  'pension':{
+    label:{ko:'🏦 연금저축/IRP', en:'🏦 Pension Savings / IRP'},
+    desc:{
+      ko:'• 세액공제: 연 400만원~700만원 한도 16.5% 공제\n• 운용 중: 과세이연 (세금 없이 복리 운용)\n• 연금 수령 시: 연금소득세 3.3~5.5% (나이에 따라)\n• 55세 이후 연금 수령 시 절세 효과 극대화',
+      en:'• Tax credit: 16.5% on up to ₩4M–7M/year\n• While investing: tax-deferred (compound without tax)\n• On withdrawal: pension income tax 3.3–5.5% (age-based)\n• Maximum tax savings when withdrawing after age 55'
+    },
+    divTax:0, gainTax:0.055, gainExempt:0, comprehensive:999999999
+  }
+};
+let taxType='us-etf', taxComprehensive='n';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('lang-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  const t = I18N[lang];
+
+  // data-i18n 속성으로 일괄 교체
+  document.querySelector('[data-i18n="header-tag"]').textContent = t['header-tag'];
+  document.querySelector('[data-i18n="header-h1"]').innerHTML = t['header-h1'];
+  document.querySelector('[data-i18n="header-desc"]').textContent = t['header-desc'];
+
+  // 섹션 제목들
+  const map = {
+    'sec-etf-select-h': 's-etf-select', 'sec-etf-select-p': 's-etf-select-sub',
+    'sec-hist-h': 's-hist',
+    'sec-divyield-h': 's-divyield', 'sec-divyield-p': 's-divyield-sub',
+    'sec-bt-h': 's-bt', 'sec-bt-p': 's-bt-sub',
+    'sec-sim-h': 's-sim', 'sec-sim-p': 's-sim-sub',
+    'sec-pf-h': 's-pf', 'sec-pf-p': 's-pf-sub',
+    'sec-goal-h': 's-goal', 'sec-goal-p': 's-goal-sub',
+    'sec-tax-h': 's-tax', 'sec-tax-p': 's-tax-sub',
+    'sec-cmp-h': 's-cmp', 'sec-cmp-p': 's-cmp-sub',
+    'lbl-monthly': 'ctrl-monthly', 'lbl-years': 'ctrl-years',
+    'lbl-rate': 'ctrl-rate', 'lbl-increase': 'ctrl-increase',
+    'lbl-bt-monthly': 'ctrl-monthly', 'lbl-bt-start': 'ctrl-start',
+    'lbl-pf-monthly': 'ctrl-monthly', 'lbl-pf-years': 'ctrl-years',
+    'lbl-cmp-monthly': 'ctrl-monthly', 'lbl-cmp-years': 'ctrl-years',
+    'lbl-res-principal': 'res-principal', 'lbl-res-gain': 'res-gain', 'lbl-res-total': 'res-total',
+    'lbl-bt-nominal': 'res-nominal', 'lbl-bt-real': 'res-real', 'lbl-bt-rate': 'res-rate',
+    'lbl-leg-principal': 'leg-principal', 'lbl-leg-principal2': 'leg-principal',
+    'lbl-leg-div': 'leg-div', 'lbl-leg-div2': 'leg-div',
+    'lbl-leg-cap': 'leg-cap', 'lbl-leg-real': 'leg-real', 'lbl-leg-cpi': 'leg-cpi',
+    'lbl-pf-add': 'pf-add', 'lbl-pf-reset': 'pf-reset', 'lbl-pf-ratio': 'pf-ratio', 'lbl-pf-growth': 'pf-growth',
+    'lbl-disclaimer': 'disclaimer',
+    // ETF 상세
+    'lbl-stat-r30': 'stat-r30', 'lbl-stat-r20': 'stat-r20', 'lbl-stat-r10': 'stat-r10', 'lbl-stat-dd': 'stat-dd',
+    // 배당 상세
+    'lbl-div-detail-title': 'div-detail-title', 'lbl-div-detail-sub': 'div-detail-sub',
+    'lbl-div-cumul': 'div-cumul', 'lbl-div-annual': 'div-annual', 'lbl-div-yield-avg': 'div-yield-avg',
+    'lbl-sim-div-title': 'sim-div-title',
+    'lbl-sim-div-annual': 'sim-div-annual', 'lbl-sim-div-annual-sub': 'sim-div-annual-sub',
+    'lbl-sim-div-monthly': 'sim-div-monthly-lbl', 'lbl-sim-div-monthly-sub': 'sim-div-monthly-sub',
+    'lbl-sim-dps-title': 'sim-dps-title',
+    'lbl-sim-price': 'sim-price-lbl', 'lbl-sim-dps': 'sim-dps-lbl', 'lbl-sim-shares': 'sim-shares-lbl',
+    'lbl-sim-dps-chart-title': 'sim-dps-chart-title',
+    'lbl-sim-dps-leg1': 'sim-dps-leg1', 'lbl-sim-dps-leg2': 'sim-dps-leg2',
+    // 포트폴리오
+    'lbl-pf-monthly':'ctrl-monthly','lbl-pf-years':'ctrl-years',
+    // 목표
+    'lbl-goal-amount': 'goal-amount-lbl', 'lbl-goal-calc-mode': 'goal-calc-mode',
+    'btn-goal-monthly': 'goal-mode-monthly', 'btn-goal-period': 'goal-mode-period',
+    'lbl-goal-etf-applied': 'goal-etf-applied',
+    'lbl-goal-monthly': 'ctrl-monthly', 'lbl-goal-period': 'ctrl-years',
+    'lbl-goal-res-principal': 'goal-res-principal-lbl', 'lbl-goal-res-gain': 'goal-res-gain-lbl',
+    'lbl-goal-shares': 'goal-shares-lbl',
+    // 세금
+    'lbl-tax-type': 'tax-type-lbl',
+    'lbl-tax-total': 'tax-total-lbl', 'lbl-tax-principal': 'tax-principal-lbl', 'lbl-tax-div': 'tax-div-lbl',
+    'lbl-tax-综합': 'tax-综합-lbl',
+    'btn-tax-separate': 'tax-separate', 'btn-tax-comprehensive': 'tax-comprehensive',
+    'lbl-tax-gain': 'tax-gain-lbl', 'lbl-tax-amount': 'tax-amount-lbl', 'lbl-tax-after': 'tax-after-lbl', 'lbl-tax-rate': 'tax-rate-lbl',
+    'lbl-tax-compare-title': 'tax-compare-title',
+    'lbl-tax-compare-tax': 'tax-compare-tax', 'lbl-tax-compare-after': 'tax-compare-after',
+    // 비교
+    'lbl-cmp-monthly': 'ctrl-monthly', 'lbl-cmp-years': 'ctrl-years',
+    // 카테고리 탭
+    'btn-cat-all':'cat-all','btn-cat-index':'cat-index','btn-cat-dividend':'cat-dividend',
+    'btn-cat-precious':'cat-precious','btn-cat-energy':'cat-energy','btn-cat-material':'cat-material',
+    'btn-cat-bond':'cat-bond','btn-cat-theme':'cat-theme',
+    // 목표 프리셋
+    'btn-goal-100m':'goal-100m','btn-goal-300m':'goal-300m','btn-goal-500m':'goal-500m','btn-goal-1b':'goal-1b',
+    // 포트폴리오/백테스팅 결과카드 (calcPf 내에서도 업데이트하므로 여기선 제거)
+    'lbl-bt-principal':'res-principal',
+  };
+  Object.entries(map).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && t[key]) el.innerHTML = t[key];
+  });
+  document.querySelectorAll('.badge-selected-lbl').forEach(el => el.textContent = t['badge-selected']);
+  document.querySelectorAll('.badge-applied-lbl').forEach(el => el.textContent = t['badge-applied']);
+  // 환율 입력칸 표시 (영어일 때만)
+  const fxBox=document.getElementById('fx-box');
+  if(fxBox) fxBox.style.display=lang==='en'?'flex':'none';
+  // ETF 카드/상세 텍스트만 직접 업데이트 (renderGrid 호출 금지 - 이벤트 루프 방지)
+  try{ if(typeof updateDetailDisplay==='function') updateDetailDisplay(); }catch(e){}
+  // 동적 텍스트 - 선언 이후에만 실행되도록 try-catch
+  try{ if(typeof updateTaxInfo==='function') updateTaxInfo(); }catch(e){}
+  try{ if(typeof calcTax==='function') calcTax(); }catch(e){}
+  try{ if(typeof calcSim==='function') calcSim(); }catch(e){}
+  try{ if(typeof calcBacktest==='function') calcBacktest(); }catch(e){}
+  try{ if(typeof calcGoal==='function') calcGoal(); }catch(e){}
+  try{ if(typeof calcPf==='function') calcPf(); }catch(e){}
+  try{ if(typeof calcCmp==='function') calcCmp(); }catch(e){}
+  // cat-intro 텍스트 직접 교체
+  try{
+    const activeBtn=document.querySelector('.cat-btn.active');
+    const cat=activeBtn?activeBtn.dataset.cat:'all';
+    const catIntroEl=document.getElementById('cat-intro');
+    if(catIntroEl) catIntroEl.textContent=(CAT_INFO[lang]||CAT_INFO['ko'])[cat]||'';
+  }catch(e){}
+  // ETF 카드 태그/이름 인라인 교체 (renderGrid 없이)
+  document.querySelectorAll('.etf-item[data-id]').forEach(card=>{
+    try{
+      const e=ETFS.find(x=>x.id===card.dataset.id);
+      if(!e) return;
+      const nameEl=card.querySelector('.etf-name');
+      if(nameEl) nameEl.textContent=etfField(e,'name');
+      const tagEls=card.querySelectorAll('.tag');
+      tagEls.forEach((el,i)=>{ if(e.tags[i]) el.textContent=etfTag(e.tags[i].t); });
+    }catch(e){}
+  });
+  // 이벤트 팝업 텍스트 인라인 교체 (재렌더링 없이)
+  document.querySelectorAll('.event-popup').forEach(popup=>{
+    try{
+      const id=popup.id; // popup-{etfid}-{yr}
+      const yr=parseFloat(id.split('-').pop());
+      const ev=EVENTS[yr];
+      if(!ev) return;
+      const evLang=ev[lang]||ev['ko']||ev;
+      const yrLabel=lang==='en'?yr+' —':yr+'년 —';
+      popup.innerHTML=`<div class="event-popup-title">📅 ${yrLabel} ${evLang.title}</div>${evLang.desc}`;
+    }catch(e){}
+  });
+  // hist-note 부제목 교체
+  try{
+    const eActive=ETFS.find(x=>x.id===selectedId);
+    if(eActive){
+      const clickHint=lang==='en'?' · 📌 Click years with events':' · 📌 클릭 가능한 연도는 이벤트 설명이 있습니다';
+      document.getElementById('hist-note').textContent=etfField(eActive,'note')+clickHint;
+    }
+  }catch(e){}
+}
+
 // 전 세계 주요 이벤트 데이터
 const EVENTS = {
-  2000:{title:'닷컴 버블 붕괴',desc:'1990년대 인터넷 기업들의 과대평가가 정점에 달하며 버블이 붕괴. 나스닥은 고점 대비 -78%까지 폭락했고 이후 3년간 하락세가 지속됐습니다.'},
-  2001:{title:'9·11 테러 & 닷컴 침체 지속',desc:'9월 11일 미국 역사상 최악의 테러 공격 발생. 이미 하락 중이던 시장에 추가 충격을 주었으며, 항공·보험업종 중심으로 급락했습니다.'},
-  2002:{title:'닷컴 버블 후폭풍',desc:'엔론·월드컴 등 대형 기업 회계 부정 스캔들 연속 발생. 투자자 신뢰가 바닥을 치며 시장은 3년째 하락을 이어갔습니다.'},
-  2003:{title:'이라크 전쟁 & 회복',desc:'미국의 이라크 침공으로 초반 불안정했지만, 전쟁이 빠르게 마무리되고 초저금리 정책 효과로 증시가 강하게 반등했습니다.'},
-  2007:{title:'서브프라임 위기 전조',desc:'미국 서브프라임 모기지(비우량 주택담보대출) 부실이 드러나기 시작. 베어스턴스 헤지펀드 붕괴 등 금융위기의 서막이 열렸습니다.'},
-  2008:{title:'글로벌 금융위기 (리먼 브라더스)',desc:'9월 15일 리먼 브라더스 파산으로 글로벌 금융 시스템이 붕괴 직전까지 몰렸습니다. S&P 500은 연간 -37% 폭락했고, 이는 대공황 이후 최악의 주식 시장 붕괴였습니다. 전 세계 수백조 원의 자산이 증발했습니다.'},
-  2009:{title:'금융위기 회복 & 양적완화',desc:'미국 연준이 전례 없는 양적완화(QE) 정책을 실시하며 시장이 바닥을 치고 강하게 반등. S&P 500은 3월 저점에서 연말까지 +64% 급등했습니다.'},
-  2010:{title:'유럽 재정위기',desc:'그리스·아일랜드·스페인 등 유럽 국가들의 부채 위기가 표면화됐지만, 미국 경제는 회복세를 이어가며 시장은 상승했습니다.'},
-  2011:{title:'미국 신용등급 강등',desc:'S&P가 미국의 신용등급을 사상 최초로 AAA에서 AA+로 강등. 유럽 재정위기도 심화됐지만 연말 무렵 회복하며 보합 수준을 유지했습니다.'},
-  2013:{title:'버냉키 쇼크 & 강세장',desc:'연준 의장 버냉키가 양적완화 축소(테이퍼링) 가능성을 시사하며 잠시 요동쳤지만, 전반적으로 강한 상승장이 이어졌습니다.'},
-  2015:{title:'중국 경제 둔화 & 위안화 절하',desc:'중국 경기 둔화 우려와 위안화 기습 절하가 글로벌 시장을 뒤흔들었습니다. 원자재 가격이 급락하며 에너지·소재 섹터가 큰 타격을 받았습니다.'},
-  2016:{title:'브렉시트 & 트럼프 당선',desc:'영국의 EU 탈퇴(브렉시트) 결정과 트럼프 대통령 당선이라는 두 번의 서프라이즈. 초반 충격 후 "트럼프 랠리"로 강하게 상승 마감했습니다.'},
-  2018:{title:'미중 무역전쟁 & 금리인상',desc:'트럼프 행정부의 대중국 관세 부과로 무역전쟁 본격화. 동시에 연준이 4차례 금리인상을 단행하며 유동성이 줄어들고, 12월에 큰 폭으로 하락했습니다.'},
-  2019:{title:'무역협상 타결 기대 & 금리인하',desc:'미중 무역협상 1단계 타결 기대감과 연준의 금리인하 3회 실시로 시장이 강하게 반등. S&P 500 역대 최고 수익률 중 하나를 기록했습니다.'},
-  2020:{title:'코로나19 팬데믹',desc:'2월부터 코로나19가 전 세계로 확산되며 3월에 S&P 500은 33일 만에 -34% 폭락. 그러나 각국 정부의 초대형 부양책과 연준의 무제한 양적완화로 역사상 가장 빠른 회복이 나타났습니다.'},
-  2021:{title:'백신 랠리 & 인플레이션 징조',desc:'코로나 백신 보급과 대규모 재정지출로 경제가 빠르게 회복. 그러나 연말부터 공급망 대란과 인플레이션 압력이 고조되기 시작했습니다.'},
-  2022:{title:'인플레이션 & 연준 초강력 금리인상',desc:'미국의 인플레이션이 40년 만의 최고치(9.1%)를 기록하자 연준이 단 1년에 4.25%p라는 초고속 금리인상을 단행. 채권과 주식이 동시에 폭락하는 이례적인 해였습니다. S&P 500은 -18.1% 하락했습니다.'},
-  2023:{title:'AI 붐 & 은행 위기',desc:'챗GPT 열풍으로 AI·기술주가 폭발적으로 상승. 실리콘밸리은행(SVB) 파산 사태가 있었지만 기술주 랠리가 시장 전체를 끌어올렸습니다.'},
-  2024:{title:'AI 성장 지속 & 금리인하',desc:'엔비디아 중심의 AI 투자 열기가 이어지고, 연준이 금리인하를 시작하며 시장이 강세를 보였습니다. S&P 500은 2년 연속 20% 이상 상승했습니다.'},
-  // 에너지/원자재
-  2014:{title:'원유 공급 과잉',desc:'미국의 셰일오일 생산 급증으로 글로벌 원유 공급이 과잉 상태. 원유 가격이 하반기에 반토막 나며 에너지 섹터 전체가 타격을 받았습니다.'},
-  2010.5:{title:'유가 회복',desc:'금융위기 이후 글로벌 경기 회복과 함께 원자재 수요가 늘며 유가가 큰 폭으로 반등했습니다.'},
-  // 금
-  2011.5:{title:'금 사상 최고가',desc:'유럽 재정위기와 미국 신용등급 강등으로 안전자산 수요가 폭증하며 금이 온스당 1,900달러를 돌파, 사상 최고가를 기록했습니다.'},
-  2013.5:{title:'금 급락',desc:'연준의 양적완화 축소 시사로 금의 인플레이션 헤지 매력이 감소. 금 가격이 -28% 급락하며 13년 만의 최악의 해를 보냈습니다.'},
+  2000:{ko:{title:'닷컴 버블 붕괴',desc:'1990년대 인터넷 기업들의 과대평가가 정점에 달하며 버블이 붕괴. 나스닥은 고점 대비 -78%까지 폭락했고 이후 3년간 하락세가 지속됐습니다.'},en:{title:'Dot-com Bubble Burst',desc:'Overvalued internet companies collapsed. The Nasdaq fell -78% from its peak and continued declining for 3 years.'}},
+  2001:{ko:{title:'9·11 테러 & 닷컴 침체 지속',desc:'9월 11일 미국 역사상 최악의 테러 공격 발생. 이미 하락 중이던 시장에 추가 충격을 주었으며, 항공·보험업종 중심으로 급락했습니다.'},en:{title:'9/11 Attacks & Dot-com Hangover',desc:'The worst terrorist attack in US history hit markets already in decline. Airlines and insurance sectors led the sell-off.'}},
+  2002:{ko:{title:'닷컴 버블 후폭풍',desc:'엔론·월드컴 등 대형 기업 회계 부정 스캔들 연속 발생. 투자자 신뢰가 바닥을 치며 시장은 3년째 하락을 이어갔습니다.'},en:{title:'Dot-com Aftermath',desc:'Enron and WorldCom accounting scandals destroyed investor confidence. Markets fell for a third consecutive year.'}},
+  2003:{ko:{title:'이라크 전쟁 & 회복',desc:'미국의 이라크 침공으로 초반 불안정했지만, 전쟁이 빠르게 마무리되고 초저금리 정책 효과로 증시가 강하게 반등했습니다.'},en:{title:'Iraq War & Recovery',desc:'US invasion of Iraq caused initial volatility, but markets rebounded strongly as the conflict ended and ultra-low rates took effect.'}},
+  2007:{ko:{title:'서브프라임 위기 전조',desc:'미국 서브프라임 모기지(비우량 주택담보대출) 부실이 드러나기 시작. 베어스턴스 헤지펀드 붕괴 등 금융위기의 서막이 열렸습니다.'},en:{title:'Subprime Crisis Begins',desc:'US subprime mortgage defaults started surfacing. The collapse of Bear Stearns hedge funds signaled the coming financial crisis.'}},
+  2008:{ko:{title:'글로벌 금융위기 (리먼 브라더스)',desc:'9월 15일 리먼 브라더스 파산으로 글로벌 금융 시스템이 붕괴 직전까지 몰렸습니다. S&P 500은 연간 -37% 폭락했고, 이는 대공황 이후 최악의 주식 시장 붕괴였습니다. 전 세계 수백조 원의 자산이 증발했습니다.'},en:{title:'Global Financial Crisis (Lehman Brothers)',desc:'Lehman Brothers filed for bankruptcy on Sep 15, pushing the global financial system to the brink. The S&P 500 fell -37% — the worst crash since the Great Depression.'}},
+  2009:{ko:{title:'금융위기 회복 & 양적완화',desc:'미국 연준이 전례 없는 양적완화(QE) 정책을 실시하며 시장이 바닥을 치고 강하게 반등. S&P 500은 3월 저점에서 연말까지 +64% 급등했습니다.'},en:{title:'Recovery & Quantitative Easing',desc:'The Fed launched unprecedented QE, sending markets surging. The S&P 500 rallied +64% from its March low to year-end.'}},
+  2010:{ko:{title:'유럽 재정위기',desc:'그리스·아일랜드·스페인 등 유럽 국가들의 부채 위기가 표면화됐지만, 미국 경제는 회복세를 이어가며 시장은 상승했습니다.'},en:{title:'European Debt Crisis',desc:'Greece, Ireland and Spain faced sovereign debt crises, but the US economy kept recovering and markets moved higher.'}},
+  2011:{ko:{title:'미국 신용등급 강등',desc:'S&P가 미국의 신용등급을 사상 최초로 AAA에서 AA+로 강등. 유럽 재정위기도 심화됐지만 연말 무렵 회복하며 보합 수준을 유지했습니다.'},en:{title:'US Credit Rating Downgrade',desc:'S&P downgraded the US from AAA to AA+ for the first time ever. Markets recovered to near flat by year-end despite the European debt crisis.'}},
+  2013:{ko:{title:'버냉키 쇼크 & 강세장',desc:'연준 의장 버냉키가 양적완화 축소(테이퍼링) 가능성을 시사하며 잠시 요동쳤지만, 전반적으로 강한 상승장이 이어졌습니다.'},en:{title:'Taper Tantrum & Bull Market',desc:'Fed Chair Bernanke hinted at tapering QE, causing a brief tantrum, but overall it was a strong bull market year.'}},
+  2015:{ko:{title:'중국 경제 둔화 & 위안화 절하',desc:'중국 경기 둔화 우려와 위안화 기습 절하가 글로벌 시장을 뒤흔들었습니다. 원자재 가격이 급락하며 에너지·소재 섹터가 큰 타격을 받았습니다.'},en:{title:'China Slowdown & Yuan Devaluation',desc:"China's surprise yuan devaluation rattled global markets. Commodity prices collapsed, hammering energy and materials sectors."}},
+  2016:{ko:{title:'브렉시트 & 트럼프 당선',desc:'영국의 EU 탈퇴(브렉시트) 결정과 트럼프 대통령 당선이라는 두 번의 서프라이즈. 초반 충격 후 "트럼프 랠리"로 강하게 상승 마감했습니다.'},en:{title:'Brexit & Trump Election',desc:"Two major surprises: UK voted to leave the EU, and Trump won the presidency. After initial shock, the Trump Rally drove strong year-end gains."}},
+  2018:{ko:{title:'미중 무역전쟁 & 금리인상',desc:'트럼프 행정부의 대중국 관세 부과로 무역전쟁 본격화. 동시에 연준이 4차례 금리인상을 단행하며 유동성이 줄어들고, 12월에 큰 폭으로 하락했습니다.'},en:{title:'US-China Trade War & Rate Hikes',desc:'Trump tariffs triggered a full trade war. The Fed hiked rates 4 times, draining liquidity. December saw a sharp sell-off.'}},
+  2019:{ko:{title:'무역협상 타결 기대 & 금리인하',desc:'미중 무역협상 1단계 타결 기대감과 연준의 금리인하 3회 실시로 시장이 강하게 반등. S&P 500 역대 최고 수익률 중 하나를 기록했습니다.'},en:{title:'Trade Deal Hopes & Rate Cuts',desc:'Phase 1 trade deal optimism and 3 Fed rate cuts drove a strong rally. One of the best annual returns in S&P 500 history.'}},
+  2020:{ko:{title:'코로나19 팬데믹',desc:'2월부터 코로나19가 전 세계로 확산되며 3월에 S&P 500은 33일 만에 -34% 폭락. 그러나 각국 정부의 초대형 부양책과 연준의 무제한 양적완화로 역사상 가장 빠른 회복이 나타났습니다.'},en:{title:'COVID-19 Pandemic',desc:'COVID-19 sent the S&P 500 crashing -34% in just 33 days. Massive stimulus and unlimited Fed QE drove the fastest recovery in history.'}},
+  2021:{ko:{title:'백신 랠리 & 인플레이션 징조',desc:'코로나 백신 보급과 대규모 재정지출로 경제가 빠르게 회복. 그러나 연말부터 공급망 대란과 인플레이션 압력이 고조되기 시작했습니다.'},en:{title:'Vaccine Rally & Inflation Signs',desc:'Vaccine rollouts and fiscal spending drove rapid recovery. But supply chain chaos and rising inflation emerged toward year-end.'}},
+  2022:{ko:{title:'인플레이션 & 연준 초강력 금리인상',desc:'미국의 인플레이션이 40년 만의 최고치(9.1%)를 기록하자 연준이 단 1년에 4.25%p라는 초고속 금리인상을 단행. 채권과 주식이 동시에 폭락하는 이례적인 해였습니다. S&P 500은 -18.1% 하락했습니다.'},en:{title:'Inflation Surge & Aggressive Fed Hikes',desc:'US inflation hit a 40-year high of 9.1%, forcing the Fed to hike by 4.25% in one year. Stocks and bonds crashed simultaneously.'}},
+  2023:{ko:{title:'AI 붐 & 은행 위기',desc:'챗GPT 열풍으로 AI·기술주가 폭발적으로 상승. 실리콘밸리은행(SVB) 파산 사태가 있었지만 기술주 랠리가 시장 전체를 끌어올렸습니다.'},en:{title:'AI Boom & Banking Crisis',desc:'The ChatGPT wave sent AI and tech stocks soaring. SVB collapsed, but the AI-driven tech rally lifted the entire market.'}},
+  2024:{ko:{title:'AI 성장 지속 & 금리인하',desc:'엔비디아 중심의 AI 투자 열기가 이어지고, 연준이 금리인하를 시작하며 시장이 강세를 보였습니다. S&P 500은 2년 연속 20% 이상 상승했습니다.'},en:{title:'AI Growth Continues & Rate Cuts',desc:'Nvidia-led AI investment fever continued and the Fed began cutting rates. The S&P 500 rose 20%+ for the second consecutive year.'}},
+  2014:{ko:{title:'원유 공급 과잉',desc:'미국의 셰일오일 생산 급증으로 글로벌 원유 공급이 과잉 상태. 원유 가격이 하반기에 반토막 나며 에너지 섹터 전체가 타격을 받았습니다.'},en:{title:'Oil Supply Glut',desc:'The US shale boom flooded global oil markets. Crude prices halved in H2, devastating the energy sector.'}},
+  2010.5:{ko:{title:'유가 회복',desc:'금융위기 이후 글로벌 경기 회복과 함께 원자재 수요가 늘며 유가가 큰 폭으로 반등했습니다.'},en:{title:'Oil Price Recovery',desc:'Global economic recovery boosted commodity demand, driving a major rebound in oil prices.'}},
+  2011.5:{ko:{title:'금 사상 최고가',desc:'유럽 재정위기와 미국 신용등급 강등으로 안전자산 수요가 폭증하며 금이 온스당 1,900달러를 돌파, 사상 최고가를 기록했습니다.'},en:{title:'Gold All-Time High',desc:"Safe-haven demand soared amid the European debt crisis and US downgrade. Gold broke $1,900/oz, hitting an all-time high."}},
+  2013.5:{ko:{title:'금 급락',desc:'연준의 양적완화 축소 시사로 금의 인플레이션 헤지 매력이 감소. 금 가격이 -28% 급락하며 13년 만의 최악의 해를 보냈습니다.'},en:{title:'Gold Crash',desc:"Fed tapering hints reduced gold's inflation-hedge appeal. Gold plunged -28%, its worst year in 13 years."}},
 };
 
 // 배당 ETF 배당수익률 데이터
@@ -417,14 +1012,26 @@ const ETFS=[
 ];
 
 const CAT_INFO={
-  all:'ETF는 크게 지수·배당·원자재·채권·테마형으로 나뉩니다. 카드를 클릭해서 선택하면 아래 시뮬레이터가 자동으로 바뀝니다.',
-  index:'📈 지수 ETF — 시장 전체를 사는 것. 개별 종목 없이 경제 성장의 과실을 자동으로 수확합니다.',
-  dividend:'💰 배당 ETF — 매달/분기마다 현금 배당을 받는 ETF. 아래에 배당수익률 차트도 함께 표시됩니다.',
-  precious:'🥇 귀금속 ETF — 금·은·백금 추종. 인플레이션·전쟁 시 가치 보존 역할.',
-  energy:'🛢 에너지 ETF — 원유·천연가스·재생에너지. 지정학 이슈에 민감.',
-  material:'🔩 원자재 ETF — 구리·희토류·리튬 등 산업 필수 소재.',
-  bond:'🏦 채권 ETF — 주식과 반대로 움직이는 경향. 포트폴리오 안정화.',
-  theme:'🚀 테마 ETF — AI·반도체·부동산 집중 투자. 수익과 위험 모두 높음.',
+  ko:{
+    all:'ETF는 크게 지수·배당·원자재·채권·테마형으로 나뉩니다. 카드를 클릭해서 선택하면 아래 시뮬레이터가 자동으로 바뀝니다.',
+    index:'📈 지수 ETF — 시장 전체를 사는 것. 개별 종목 없이 경제 성장의 과실을 자동으로 수확합니다.',
+    dividend:'💰 배당 ETF — 매달/분기마다 현금 배당을 받는 ETF. 아래에 배당수익률 차트도 함께 표시됩니다.',
+    precious:'🥇 귀금속 ETF — 금·은·백금 추종. 인플레이션·전쟁 시 가치 보존 역할.',
+    energy:'🛢 에너지 ETF — 원유·천연가스·재생에너지. 지정학 이슈에 민감.',
+    material:'🔩 원자재 ETF — 구리·희토류·리튬 등 산업 필수 소재.',
+    bond:'🏦 채권 ETF — 주식과 반대로 움직이는 경향. 포트폴리오 안정화.',
+    theme:'🚀 테마 ETF — AI·반도체·부동산 집중 투자. 수익과 위험 모두 높음.',
+  },
+  en:{
+    all:'ETFs are categorized into index, dividend, commodities, bonds & themes. Click a card to select — the simulator updates automatically.',
+    index:'📈 Index ETF — Buy the whole market. Automatically harvest economic growth without picking individual stocks.',
+    dividend:'💰 Dividend ETF — Receive cash dividends monthly or quarterly. Dividend yield chart shown below.',
+    precious:'🥇 Precious Metals ETF — Tracks gold, silver & platinum. Preserves value during inflation & crisis.',
+    energy:'🛢 Energy ETF — Crude oil, natural gas & clean energy. Sensitive to geopolitical events.',
+    material:'🔩 Materials ETF — Copper, rare earth, lithium & other industrial essentials.',
+    bond:'🏦 Bond ETF — Tends to move opposite to stocks. Used for portfolio stabilization.',
+    theme:'🚀 Theme ETF — Concentrated in AI, semiconductors, real estate. High reward, high risk.',
+  }
 };
 
 let selectedId='spy', simChart=null, divChart=null;
@@ -435,17 +1042,28 @@ function fmtKRW(n){
   if(n>=10000)return'₩'+Math.round(n/10000).toLocaleString('ko-KR')+'만';
   return'₩'+Math.round(n).toLocaleString('ko-KR');
 }
+// 언어에 따라 원화/달러 전환
+function fmtMoney(krwAmount){
+  if(currentLang==='en'){
+    const rate=getUsdKrw();
+    const usd=krwAmount/rate;
+    if(usd>=1000000)return'$'+(usd/1000000).toFixed(2)+'M';
+    if(usd>=1000)return'$'+(usd/1000).toFixed(1)+'K';
+    return'$'+Math.round(usd).toLocaleString('en-US');
+  }
+  return fmtKRW(krwAmount);
+}
 
 // ETF 주가 및 1주당 배당금 (2024년 기준, USD)
 const ETF_SHARE = {
-  'schd':  {price:26.5,  dps:1.05,  freq:'분기'},
-  'vym':   {price:128.0, dps:3.54,  freq:'분기'},
-  'jepi':  {price:58.2,  dps:4.76,  freq:'월'},
-  'tiger-div':{price:15000, dps:550, freq:'월', krw:true},
-  'gdx':   {price:42.0,  dps:0.60,  freq:'반기'},
-  'xle':   {price:91.0,  dps:3.12,  freq:'분기'},
-  'hyg':   {price:78.5,  dps:4.55,  freq:'월'},
-  'vnq':   {price:85.0,  dps:3.60,  freq:'분기'},
+  'schd':  {price:26.5,  dps:1.05,  freq:{ko:'분기',en:'Quarterly'}},
+  'vym':   {price:128.0, dps:3.54,  freq:{ko:'분기',en:'Quarterly'}},
+  'jepi':  {price:58.2,  dps:4.76,  freq:{ko:'월',en:'Monthly'}},
+  'tiger-div':{price:15000, dps:550, freq:{ko:'월',en:'Monthly'}, krw:true},
+  'gdx':   {price:42.0,  dps:0.60,  freq:{ko:'반기',en:'Semi-ann.'}},
+  'xle':   {price:91.0,  dps:3.12,  freq:{ko:'분기',en:'Quarterly'}},
+  'hyg':   {price:78.5,  dps:4.55,  freq:{ko:'월',en:'Monthly'}},
+  'vnq':   {price:85.0,  dps:3.60,  freq:{ko:'분기',en:'Quarterly'}},
 };
 
 // ETF별 연도별 1주당 배당금(DPS) 실제 역사 데이터 (USD, split 조정)
@@ -486,7 +1104,79 @@ const DPS_HISTORY = {
 };
 
 // 환율 (USD→KRW 추정)
-const USD_KRW = 1380;
+let USD_KRW = 1380;
+function getUsdKrw(){ return parseFloat(document.getElementById('fx-rate')?.value||1380)||1380; }
+
+// ETF 영어 번역 맵
+const ETF_EN={
+  'spy':{name:'S&P 500 ETF',desc:'Tracks the 500 largest US companies. The world\'s most traded ETF.',risk:'Medium Risk',note:'S&P 500 basis, dividends reinvested'},
+  'qqq':{name:'Nasdaq 100 ETF',desc:'Apple, Microsoft, Nvidia & top tech stocks. Higher return, higher volatility.',risk:'High Risk',note:'Nasdaq 100 basis, dividends reinvested'},
+  'vt':{name:'Global Stock ETF',desc:'9,000+ companies across 50 countries in one fund.',risk:'Medium Risk',note:'MSCI All Country World basis'},
+  'iwm':{name:'Russell 2000 ETF',desc:'2,000 US small/mid-cap stocks. Outperforms in economic recoveries.',risk:'High Risk',note:'Russell 2000 basis'},
+  'kospi':{name:'KOSPI 200 ETF',desc:'Korea\'s top 200 companies. ~25% Samsung. No currency risk for KRW holders.',risk:'Medium Risk',note:'KOSPI 200 basis, dividends reinvested'},
+  'semikr':{name:'Korea Semiconductor ETF',desc:'Samsung & SK Hynix focused. Highly sensitive to semiconductor cycles.',risk:'High Risk',note:'KRX Semiconductor Index basis'},
+  'schd':{name:'Schwab Dividend ETF',desc:'100 quality dividend-growth stocks. 3–4% yield + price appreciation. Top pick.',risk:'Low Risk',note:'SCHD total return basis (dividends reinvested)'},
+  'vym':{name:'Vanguard High Dividend ETF',desc:'400+ high-yield dividend stocks. Broad, stable. Popular for retirement.',risk:'Low Risk',note:'VYM total return basis (dividends reinvested)'},
+  'jepi':{name:'JPMorgan Premium Income ETF',desc:'Covered call strategy targeting 7–9% annual yield. Strong cash flow.',risk:'Medium Risk',note:'JEPI since inception (2020)'},
+  'tiger-div':{name:'TIGER US Dividend ETF (KR listed)',desc:'SCHD-tracking ETF on Korean exchange. Monthly dividends. ISA/pension eligible.',risk:'Low Risk',note:'TIGER US Dividend Dow Jones basis'},
+  'gld':{name:'Gold ETF',desc:'Physical gold holdings. Gains during inflation, war, and economic crises.',risk:'Medium Risk',note:'Gold spot price basis'},
+  'slv':{name:'Silver ETF',desc:'Physical silver. 2–3× more volatile than gold. Industrial demand from solar/chips.',risk:'High Risk',note:'Silver spot price basis'},
+  'gdx':{name:'Gold Miners ETF',desc:'Gold mining companies. Tends to 2–3× outperform gold price gains. Pays dividends.',risk:'High Risk',note:'VanEck Gold Miners ETF basis'},
+  'pplt':{name:'Platinum ETF',desc:'Platinum exposure. Tied to hydrogen vehicles & catalytic demand.',risk:'High Risk',note:'Platinum spot price basis'},
+  'uso':{name:'Crude Oil ETF',desc:'WTI/Brent crude oil futures. Geopolitics-sensitive. Best for short-term trading.',risk:'High Risk',note:'WTI crude oil futures basis'},
+  'xle':{name:'Energy Sector ETF',desc:'ExxonMobil, Chevron & energy majors. More stable than USO, pays dividends.',risk:'Medium Risk',note:'SPDR Energy Select Sector basis'},
+  'ung':{name:'Natural Gas ETF',desc:'Natural gas futures. Winter demand & LNG exports drive it. Extremely volatile.',risk:'Very High Risk',note:'Natural gas futures basis'},
+  'icln':{name:'Clean Energy ETF',desc:'Solar, wind & hydrogen companies. Long-term growth theme.',risk:'High Risk',note:'iShares Global Clean Energy basis'},
+  'copx':{name:'Copper Miners ETF',desc:'Copper mining companies. EV & AI infrastructure drive demand growth.',risk:'High Risk',note:'Global X Copper Miners ETF basis'},
+  'remx':{name:'Rare Earth ETF',desc:'Rare earths, lithium & cobalt. Critical for batteries & semiconductors.',risk:'Very High Risk',note:'VanEck Rare Earth ETF basis'},
+  'lit':{name:'Lithium & Battery ETF',desc:'Lithium mining & battery manufacturers. Tied to EV adoption speed.',risk:'High Risk',note:'Global X Lithium & Battery Tech ETF basis'},
+  'pdbc':{name:'Broad Commodities ETF',desc:'14 commodities: gold, silver, oil, copper, corn, wheat & more.',risk:'Medium Risk',note:'Invesco Optimum Yield Commodity basis'},
+  'tlt':{name:'US Long-Term Treasury ETF',desc:'20+ year US Treasuries. Rises when rates fall. Recession hedge.',risk:'Low Risk',note:'iShares 20+ Year Treasury Bond ETF basis'},
+  'hyg':{name:'High Yield Bond ETF',desc:'Lower-rated corporate bonds. 5–7% yield but can crash like stocks in recessions.',risk:'Medium Risk',note:'iShares iBoxx High Yield basis'},
+  'soxx':{name:'Semiconductor ETF (US)',desc:'Nvidia, TSMC, ASML & full semiconductor value chain. Core AI play.',risk:'High Risk',note:'iShares Semiconductor ETF basis'},
+  'botz':{name:'AI & Robotics ETF',desc:'AI software, autonomous vehicles & industrial robots.',risk:'High Risk',note:'Global X Robotics & AI ETF basis'},
+  'arkk':{name:'ARK Innovation ETF',desc:'Genomics, fintech, autonomous driving. Surged in 2020, then fell 75%.',risk:'Very High Risk',note:'ARK Innovation ETF basis'},
+  'vnq':{name:'Real Estate REIT ETF',desc:'Warehouses, data centers & apartments. 3–4% yield + indirect real estate exposure.',risk:'Medium Risk',note:'Vanguard Real Estate ETF basis'},
+};
+
+// ETF 태그 영어 번역 맵
+const TAG_EN={
+  '연평균 ~10%':'~10% Avg','연평균 ~14%':'~14% Avg','연평균 ~8%':'~8% Avg','연평균 ~5~7%':'~5-7% Avg',
+  '연평균 ~12%':'~12% Avg','연평균 ~20%+':'~20%+ Avg','연평균 ~10%+':'~10%+ Avg',
+  '낮은 수수료':'Low Fee','기술주 집중':'Tech Heavy','글로벌 분산':'Global Diversified',
+  '중소형주':'Small/Mid Cap','높은 변동성':'High Volatility','국내주식':'Korean Stocks',
+  '국내 반도체':'KR Semis','국내 계좌':'KR Account',
+  '배당 3~4%':'3-4% Yield','배당 2.5~3%':'2.5-3% Yield','배당 7~9%':'7-9% Yield','배당 있음':'Pays Dividend',
+  '배당 성장':'Div Growth','광범위 분산':'Broad Diversified','커버드콜':'Covered Call','월배당':'Monthly Div',
+  '안전자산':'Safe Haven','인플레 헤지':'Inflation Hedge','산업+귀금속':'Industrial+Metal',
+  '레버리지 효과':'Leveraged Play','희소금속':'Rare Metal','수소차 연동':'H2 Vehicle',
+  '원유 직접':'Direct Oil','선물 비용':'Futures Cost','천연가스':'Natural Gas',
+  '매우 높은 변동성':'Extreme Volatility','ESG':'ESG','장기 성장':'Long-term Growth',
+  '전기차 연동':'EV Linked','AI 인프라':'AI Infra','희토류':'Rare Earth','배터리 소재':'Battery Materials',
+  '전기차':'EV','2차전지':'Battery','폭넓은 분산':'Broad Exposure',
+  'AI 핵심':'AI Core','AI 테마':'AI Theme','고위험 고수익':'High Risk/Reward',
+  '액티브 운용':'Active Mgmt','부동산':'Real Estate','금리 민감':'Rate Sensitive',
+  '신용 리스크':'Credit Risk','에너지 기업':'Energy Cos',
+  '낮은 위험':'Low Risk','중간 위험':'Med Risk','높은 위험':'High Risk','매우 높은 위험':'Very High Risk',
+};
+
+// 언어에 따른 ETF 필드 반환
+function etfField(e, field){
+  if(currentLang==='en' && ETF_EN[e.id] && ETF_EN[e.id][field]) return ETF_EN[e.id][field];
+  return e[field];
+}
+function etfTag(tagText){
+  if(currentLang==='en') return TAG_EN[tagText]||tagText;
+  return tagText;
+}
+function riskLabel(risk){
+  if(currentLang==='en'){
+    const map={'중간 위험':'Medium Risk','높은 위험':'High Risk','낮은 위험':'Low Risk','매우 높은 위험':'Very High Risk'};
+    return map[risk]||risk;
+  }
+  return risk;
+}
+
 
 
 const CPI = {
@@ -504,7 +1194,7 @@ function calcBacktest(){
   const monthly=parseFloat(document.getElementById('bt-monthly').value);
   const startYr=parseInt(document.getElementById('bt-start').value);
   document.getElementById('bt-monthly-out').textContent='₩'+monthly.toLocaleString('ko-KR');
-  document.getElementById('bt-start-out').textContent=startYr+'년부터';
+  document.getElementById('bt-start-out').textContent=startYr+(currentLang==='en'?' from':t('unit-from'));
 
   // 해당 ETF에서 startYr 이후 실제 수익률 추출
   const validPairs=[];
@@ -568,17 +1258,17 @@ function calcBacktest(){
   const realGainRate=((finalReal-principal)/principal*100).toFixed(1);
   const years=validPairs.length;
 
-  document.getElementById('bt-principal').textContent=fmtKRW(principal);
-  document.getElementById('bt-nominal').textContent=fmtKRW(finalNominal);
-  document.getElementById('bt-real').textContent=fmtKRW(finalReal);
+  document.getElementById('bt-principal').textContent=fmtMoney(principal);
+  document.getElementById('bt-nominal').textContent=fmtMoney(finalNominal);
+  document.getElementById('bt-real').textContent=fmtMoney(finalReal);
   document.getElementById('bt-rate').textContent='+'+gainRate+'%';
 
   // 배당 카드
   const divCard=document.getElementById('bt-div-card');
   if(e.isDividend&&totalDividend>0){
     divCard.style.display='block';
-    document.getElementById('bt-div-total').textContent=fmtKRW(Math.round(totalDividend));
-    document.getElementById('bt-div-annual').textContent=fmtKRW(Math.round(totalDividend/years));
+    document.getElementById('bt-div-total').textContent=fmtMoney(Math.round(totalDividend));
+    document.getElementById('bt-div-annual').textContent=fmtMoney(Math.round(totalDividend/years));
     const avgYield=divData&&divData.yields?
       (divData.yields.reduce((a,b)=>a+b,0)/divData.yields.length).toFixed(1):'—';
     document.getElementById('bt-div-yield').textContent=avgYield+'%';
@@ -588,11 +1278,9 @@ function calcBacktest(){
 
   const totalCpiInflation=((realDeflator-1)*100).toFixed(0);
   const hasDivData=e.isDividend&&totalDividend>0;
-  document.getElementById('bt-insight').textContent=
-    `${startYr}년부터 ${years}년간 월 ${monthly.toLocaleString('ko-KR')}원 투자 시, `+
-    `명목 수익률 +${gainRate}% (${fmtKRW(finalNominal)}). `+
-    `같은 기간 누적 물가상승률 약 ${totalCpiInflation}%를 반영한 실질 가치는 ${fmtKRW(finalReal)}으로, `+
-    `실질 수익률은 +${realGainRate}%입니다.`;
+  document.getElementById('bt-insight').textContent= currentLang==='en'
+    ?`${years} years from ${startYr}, investing ${fmtMoney(monthly)}/month — nominal return +${gainRate}% (${fmtMoney(finalNominal)}). After ~${totalCpiInflation}% cumulative inflation, real value is ${fmtMoney(finalReal)} (real return +${realGainRate}%).`
+    :`${startYr}년부터 ${years}년간 월 ${monthly.toLocaleString('ko-KR')}원 투자 시, 명목 수익률 +${gainRate}% (${fmtMoney(finalNominal)}). 같은 기간 누적 물가상승률 약 ${totalCpiInflation}%를 반영한 실질 가치는 ${fmtMoney(finalReal)}으로, 실질 수익률은 +${realGainRate}%입니다.`;
 
   // 범례 업데이트
   const legDiv=document.getElementById('bt-leg-div');
@@ -600,11 +1288,11 @@ function calcBacktest(){
   if(hasDivData){
     legDiv.style.display='flex';
     legCap.querySelector('.leg-dot').style.background='#22d87a';
-    legCap.lastChild.textContent='주가 차익';
+    legCap.querySelector('span').textContent=t('leg-cap');
   } else {
     legDiv.style.display='none';
     legCap.querySelector('.leg-dot').style.background='#22d87a';
-    legCap.lastChild.textContent='수익 (명목)';
+    legCap.querySelector('span').textContent=t('res-gain');
   }
 
   if(btChart)btChart.destroy();
@@ -613,11 +1301,15 @@ function calcBacktest(){
     data:{
       labels,
       datasets:[
-        {type:'bar',label:'원금 누계',data:principals,backgroundColor:'#2a5a3a',stack:'v',order:3},
-        {type:'bar',label:'배당 수익',data:hasDivData?divAccum:nominals.map((n,i)=>Math.max(0,n-principals[i])),backgroundColor:'#f5a623',stack:'v',order:3},
-        ...(hasDivData?[{type:'bar',label:'주가 차익',data:capGains,backgroundColor:'#22d87a',stack:'v',order:3}]:[]),
-        {type:'line',label:'실질 평가금액',data:reals,borderColor:'#5b8fff',backgroundColor:'rgba(91,143,255,0.1)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#5b8fff',fill:false,order:1,yAxisID:'y'},
-        {type:'line',label:'물가상승률',data:[null,...cpiByYear.map(d=>d.cpi)],borderColor:'rgba(240,82,82,0.7)',borderWidth:1.5,pointRadius:2,pointBackgroundColor:'rgba(240,82,82,0.7)',fill:false,order:2,yAxisID:'y2',borderDash:[4,3]},
+        {type:'bar',label:t('leg-principal'),data:principals,backgroundColor:'#2a5a3a',stack:'v',order:3},
+        ...(hasDivData?[
+          {type:'bar',label:t('leg-div'),data:divAccum,backgroundColor:'#f5a623',stack:'v',order:3},
+          {type:'bar',label:t('leg-cap'),data:capGains,backgroundColor:'#22d87a',stack:'v',order:3},
+        ]:[
+          {type:'bar',label:t('res-gain'),data:nominals.map((n,i)=>Math.max(0,n-principals[i])),backgroundColor:'#22d87a',stack:'v',order:3},
+        ]),
+        {type:'line',label:t('leg-real'),data:reals,borderColor:'#5b8fff',backgroundColor:'rgba(91,143,255,0.1)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#5b8fff',fill:false,order:1,yAxisID:'y'},
+        {type:'line',label:t('leg-cpi'),data:[null,...cpiByYear.map(d=>d.cpi)],borderColor:'rgba(240,82,82,0.7)',borderWidth:1.5,pointRadius:2,pointBackgroundColor:'rgba(240,82,82,0.7)',fill:false,order:2,yAxisID:'y2',borderDash:[4,3]},
       ]
     },
     options:{
@@ -626,14 +1318,14 @@ function calcBacktest(){
         legend:{display:false},
         tooltip:{callbacks:{
           label:ctx=>{
-            if(ctx.dataset.label==='물가상승률')return` 물가상승률: ${ctx.raw?.toFixed(1)||0}%`;
-            return` ${ctx.dataset.label}: ${fmtKRW(ctx.raw||0)}`;
+            if(ctx.dataset.label===t('leg-cpi'))return` ${t('leg-cpi')}: ${ctx.raw?.toFixed(1)||0}%`;
+            return` ${ctx.dataset.label}: ${fmtMoney(ctx.raw||0)}`;
           }
         }}
       },
       scales:{
         x:{stacked:true,ticks:{color:'#555a6b',font:{size:11}},grid:{display:false}},
-        y:{stacked:true,position:'left',ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtKRW(v)},grid:{color:'rgba(255,255,255,.04)'}},
+        y:{stacked:true,position:'left',ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtMoney(v)},grid:{color:'rgba(255,255,255,.04)'}},
         y2:{position:'right',ticks:{color:'rgba(240,82,82,0.6)',font:{size:10},callback:v=>v+'%'},grid:{display:false},suggestedMin:0,suggestedMax:12}
       }
     }
@@ -641,13 +1333,13 @@ function calcBacktest(){
 }
 
 function renderGrid(cat){
-  document.getElementById('cat-intro').textContent=CAT_INFO[cat]||'';
+  document.getElementById('cat-intro').textContent=(CAT_INFO[currentLang]||CAT_INFO['ko'])[cat]||'';
   const list=cat==='all'?ETFS:ETFS.filter(e=>e.cat===cat);
   document.getElementById('etf-grid').innerHTML=list.map(e=>`
     <div class="etf-item${e.id===selectedId?' selected':''}" data-id="${e.id}">
       <div class="etf-ticker">${e.ticker}</div>
-      <div class="etf-name">${e.name}</div>
-      <div class="etf-tags">${e.tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</div>
+      <div class="etf-name">${etfField(e,'name')}</div>
+      <div class="etf-tags">${e.tags.map(tg=>`<span class="tag ${tg.c}">${etfTag(tg.t)}</span>`).join('')}</div>
     </div>`).join('');
   document.querySelectorAll('.etf-item').forEach(el=>{
     el.addEventListener('click',()=>{selectedId=el.dataset.id;openPopupId=null;renderGrid(cat);updateDetail();});
@@ -656,15 +1348,65 @@ function renderGrid(cat){
 
 function updateDetail(){
   const e=ETFS.find(x=>x.id===selectedId);if(!e)return;
-  document.getElementById('d-name').textContent=e.ticker+' · '+e.name;
-  document.getElementById('d-desc').textContent=e.desc;
+  document.getElementById('d-name').textContent=e.ticker+' · '+etfField(e,'name');
+  document.getElementById('d-desc').textContent=etfField(e,'desc');
   const risk=document.getElementById('d-risk');
-  risk.textContent=e.risk;risk.className='risk-badge '+e.rc;
-  document.getElementById('d-r30').textContent=e.r30;
-  document.getElementById('d-r20').textContent=e.r20;
-  document.getElementById('d-r10').textContent=e.r10;
+  risk.textContent=riskLabel(e.risk);risk.className='risk-badge '+e.rc;
+  // "약 X%" → 영어에서는 "~X%"로 변환, N/A는 —로
+  function fmtRate(val){
+    if(!val||val==='N/A') return '—';
+    if(currentLang==='en') return val.replace(/약 /g,'~');
+    return val;
+  }
+
+  // 실제 데이터 있는 연도로 운용 기간 및 연평균 자동 계산
+  function calcActualCagr(etf){
+    const validYrs=etf.yrs.filter((y,i)=>y!=='-'&&etf.rets[i]!==0);
+    if(validYrs.length<2) return null;
+    const startYr=Math.min(...validYrs);
+    const endYr=Math.max(...validYrs);
+    const years=endYr-startYr;
+    // 누적 수익률로 CAGR 계산
+    let cumulative=1;
+    etf.yrs.forEach((y,i)=>{
+      if(y!=='-'&&etf.rets[i]!==0) cumulative*=(1+etf.rets[i]/100);
+    });
+    const cagr=((Math.pow(cumulative,1/years)-1)*100).toFixed(1);
+    return{startYr,endYr,years,cagr};
+  }
+
+  const r30El=document.getElementById('d-r30');
+  const r20El=document.getElementById('d-r20');
+  const r10El=document.getElementById('d-r10');
+
+  // r30이 N/A면 실제 운용 기간으로 대체
+  if(!e.r30||e.r30==='N/A'){
+    const actual=calcActualCagr(e);
+    if(actual){
+      const label=currentLang==='en'
+        ?`${actual.years}Y avg: ~${actual.cagr}%`
+        :`${actual.years}년 연평균 약 ${actual.cagr}%`;
+      r30El.textContent=label;
+      r30El.style.cssText='color:var(--text2);font-size:13px;';
+      // 30년/20년/10년 라벨도 실제 기간으로 교체
+      document.getElementById('lbl-stat-r30').textContent=
+        currentLang==='en'?`${actual.startYr}–${actual.endYr}`:`${actual.startYr}~${actual.endYr}`;
+      r20El.textContent='—'; r20El.style.color='var(--text3)';
+      r10El.textContent='—'; r10El.style.color='var(--text3)';
+    } else {
+      r30El.textContent='—'; r30El.style.color='var(--text3)';
+      r20El.textContent='—'; r20El.style.color='var(--text3)';
+      r10El.textContent='—'; r10El.style.color='var(--text3)';
+    }
+  } else {
+    r30El.textContent=fmtRate(e.r30); r30El.style.color='';
+    r20El.textContent=fmtRate(e.r20); r20El.style.color='';
+    r10El.textContent=fmtRate(e.r10); r10El.style.color='';
+    document.getElementById('lbl-stat-r30').textContent=t('stat-r30');
+  }
   document.getElementById('d-dd').textContent=e.dd;
-  document.getElementById('hist-note').textContent=e.note+(e.isDividend?' · 📌 클릭 가능한 연도는 이벤트 설명이 있습니다':' · 📌 클릭 가능한 연도는 이벤트 설명이 있습니다');
+  const clickHint=currentLang==='en'?' · 📌 Click years with events':' · 📌 클릭 가능한 연도는 이벤트 설명이 있습니다';
+  document.getElementById('hist-note').textContent=etfField(e,'note')+clickHint;
 
   // hist bars
   const validRets=e.rets.filter((r,i)=>e.yrs[i]!=='-'&&r!==0);
@@ -693,7 +1435,9 @@ function updateDetail(){
     popup.className='event-popup';
     popup.id=popupId;
     if(ev){
-      popup.innerHTML=`<div class="event-popup-title">📅 ${yr}년 — ${ev.title}</div>${ev.desc}`;
+      const evLang=ev[currentLang]||ev['ko']||ev;
+      const yrLabel=currentLang==='en'?yr+' —':yr+'년 —';
+      popup.innerHTML=`<div class="event-popup-title">📅 ${yrLabel} ${evLang.title}</div>${evLang.desc}`;
     }
 
     histEl.appendChild(row);
@@ -711,11 +1455,32 @@ function updateDetail(){
 
   // 배당 차트
   updateDivChart(e);
-  document.getElementById('sim-rate').value=e.rate;
+  const simRateEl=document.getElementById('sim-rate');
+  if(simRateEl) simRateEl.value=e.rate; // value 직접 설정 (input 이벤트 발생 안 함)
   const btLabel=document.getElementById('bt-etf-label');
   if(btLabel) btLabel.textContent=e.ticker;
+  // 4개 섹션 뱃지 일괄 업데이트
+  ['badge-etf-select','badge-etf-hist','badge-etf-divyield','badge-etf-sim'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=e.ticker;
+  });
   calcSim();
   calcBacktest();
+  if(typeof syncGoalEtf==='function') syncGoalEtf();
+  if(typeof calcGoal==='function') calcGoal();
+}
+
+// setLang에서만 사용 - calc 호출 없는 순수 렌더링만
+function updateDetailDisplay(){
+  const e=ETFS.find(x=>x.id===selectedId);if(!e)return;
+  document.getElementById('d-name').textContent=e.ticker+' · '+etfField(e,'name');
+  document.getElementById('d-desc').textContent=etfField(e,'desc');
+  const risk=document.getElementById('d-risk');
+  risk.textContent=riskLabel(e.risk);risk.className='risk-badge '+e.rc;
+  ['badge-etf-select','badge-etf-hist','badge-etf-divyield','badge-etf-sim'].forEach(id=>{
+    const el=document.getElementById(id);if(el) el.textContent=e.ticker;
+  });
+  if(typeof syncGoalEtf==='function') syncGoalEtf();
 }
 
 function updateDivChart(e){
@@ -733,11 +1498,11 @@ function updateDivChart(e){
     type:'bar',
     data:{
       labels:d.yrs.map(y=>y+''),
-      datasets:[{label:'배당수익률',data:d.yields,backgroundColor:'rgba(34,216,122,0.5)',borderColor:'#22d87a',borderWidth:1,borderRadius:3}]
+      datasets:[{label:t('s-divyield'),data:d.yields,backgroundColor:'rgba(34,216,122,0.5)',borderColor:'#22d87a',borderWidth:1,borderRadius:3}]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` 배당수익률: ${ctx.raw.toFixed(1)}%`}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${t('s-divyield')}: ${ctx.raw.toFixed(1)}%`}}},
       scales:{
         x:{ticks:{color:'#555a6b',font:{size:11}},grid:{display:false}},
         y:{ticks:{color:'#555a6b',font:{size:11},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.04)'},suggestedMin:0,suggestedMax:12}
@@ -752,7 +1517,7 @@ function calcSim(){
   const rate=parseFloat(document.getElementById('sim-rate').value)/100;
   const increase=parseFloat(document.getElementById('increase').value)/100;
   document.getElementById('monthly-out').textContent='₩'+monthly.toLocaleString('ko-KR');
-  document.getElementById('sim-years-out').textContent=years+'년';
+  document.getElementById('sim-years-out').textContent=years+t('unit-year');
   document.getElementById('sim-rate-out').textContent=(rate*100).toFixed(1)+'%';
   document.getElementById('increase-out').textContent=(increase*100).toFixed(1)+'%';
   const mr=rate/12;let total=0,principal=0,cur=monthly;
@@ -760,14 +1525,16 @@ function calcSim(){
   for(let y=1;y<=years;y++){
     for(let m=0;m<12;m++){total=(total+cur)*(1+mr);principal+=cur;}
     if(y<years)cur*=(1+increase);
-    pArr.push(Math.round(principal));gArr.push(Math.round(total-principal));labels.push(y+'년');
+    pArr.push(Math.round(principal));gArr.push(Math.round(total-principal));labels.push(y+t('unit-year'));
   }
-  document.getElementById('res-principal').textContent=fmtKRW(principal);
-  document.getElementById('res-gain').textContent=fmtKRW(total-principal);
-  document.getElementById('res-total').textContent=fmtKRW(total);
+  document.getElementById('res-principal').textContent=fmtMoney(principal);
+  document.getElementById('res-gain').textContent=fmtMoney(total-principal);
+  document.getElementById('res-total').textContent=fmtMoney(total);
   const gr=((total-principal)/principal*100).toFixed(0);
   const dy=rate>0?Math.round(72/(rate*100)):'∞';
-  document.getElementById('insight').textContent=`${years}년 후 원금 대비 복리 수익 ${gr}%. 72의 법칙 기준 현재 수익률(${(rate*100).toFixed(1)}%)에서 투자금이 2배가 되는 데 약 ${dy}년 소요.`;
+  document.getElementById('insight').textContent= currentLang==='en'
+    ?`After ${years} years: +${gr}% return on principal. At ${(rate*100).toFixed(1)}% annual return, your investment doubles in ~${dy} years (Rule of 72).`
+    :`${years}년 후 원금 대비 복리 수익 ${gr}%. 72의 법칙 기준 현재 수익률(${(rate*100).toFixed(1)}%)에서 투자금이 2배가 되는 데 약 ${dy}년 소요.`;
 
   // 배당 카드
   const e=ETFS.find(x=>x.id===selectedId);
@@ -782,8 +1549,8 @@ function calcSim(){
     })();
     const annualDiv=Math.round(total*divYieldAvg);
     const monthlyDiv=Math.round(annualDiv/12);
-    document.getElementById('sim-div-annual').textContent=fmtKRW(annualDiv);
-    document.getElementById('sim-div-monthly').textContent=fmtKRW(monthlyDiv);
+    document.getElementById('sim-div-annual').textContent=fmtMoney(annualDiv);
+    document.getElementById('sim-div-monthly').textContent=fmtMoney(monthlyDiv);
 
     // 1주당 배당금 & 보유 주수
     const isKrw=shareInfo.krw;
@@ -793,10 +1560,11 @@ function calcSim(){
     document.getElementById('sim-share-price').textContent=isKrw?
       '₩'+shareInfo.price.toLocaleString('ko-KR'):
       `$${shareInfo.price} (≈₩${sharePrice.toLocaleString('ko-KR')})`;
+    const freqLabel=typeof shareInfo.freq==='object'?shareInfo.freq[currentLang]||shareInfo.freq.ko:shareInfo.freq;
     document.getElementById('sim-dps').textContent=isKrw?
-      '₩'+shareInfo.dps.toLocaleString('ko-KR')+' / '+shareInfo.freq:
-      `$${shareInfo.dps} (≈₩${dps.toLocaleString('ko-KR')}) / ${shareInfo.freq}`;
-    document.getElementById('sim-shares').textContent=estimatedShares.toLocaleString('ko-KR')+'주';
+      '₩'+shareInfo.dps.toLocaleString('ko-KR')+' / '+freqLabel:
+      `$${shareInfo.dps} (≈₩${dps.toLocaleString('ko-KR')}) / ${freqLabel}`;
+    document.getElementById('sim-shares').textContent=estimatedShares.toLocaleString('ko-KR')+t('unit-shares');
 
     // 연도별 실제 1주당 배당금(DPS) 역사 차트
     const dpsHistory=DPS_HISTORY[e.id];
@@ -816,8 +1584,8 @@ function calcSim(){
         data:{
           labels:dpsLabels,
           datasets:[
-            {type:'bar',label:'1주당 연간 배당금',data:dpsVals,backgroundColor:'rgba(34,216,122,0.6)',borderColor:'#22d87a',borderWidth:1,borderRadius:3,yAxisID:'y',order:2},
-            {type:'line',label:'전년 대비 증가율',data:dpsGrowthRates,borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,0.1)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#f5a623',fill:false,yAxisID:'y2',order:1,spanGaps:true},
+            {type:'bar',label:t('sim-dps-leg1'),data:dpsVals,backgroundColor:'rgba(34,216,122,0.6)',borderColor:'#22d87a',borderWidth:1,borderRadius:3,yAxisID:'y',order:2},
+            {type:'line',label:t('sim-dps-leg2'),data:dpsGrowthRates,borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,0.1)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#f5a623',fill:false,yAxisID:'y2',order:1,spanGaps:true},
           ]
         },
         options:{
@@ -826,11 +1594,11 @@ function calcSim(){
             legend:{display:false},
             tooltip:{callbacks:{
               label:ctx=>{
-                if(ctx.dataset.label==='1주당 연간 배당금')
-                  return` 1주당 배당금: ${unit}${ctx.raw.toFixed(2)}`;
+                if(ctx.dataset.label===t('sim-dps-leg1'))
+                  return` ${t('sim-dps-leg1')}: ${unit}${ctx.raw.toFixed(2)}`;
                 if(ctx.raw===null) return null;
                 const sign=ctx.raw>=0?'+':'';
-                return` 전년 대비: ${sign}${ctx.raw}%`;
+                return` ${t('sim-dps-leg2')}: ${sign}${ctx.raw}%`;
               }
             }}
           },
@@ -852,13 +1620,675 @@ function calcSim(){
   if(simChart)simChart.destroy();
   simChart=new Chart(document.getElementById('sim-chart'),{
     type:'bar',
-    data:{labels,datasets:[{label:'원금 누계',data:pArr,backgroundColor:'#2a5a3a',stack:'a'},{label:'복리 수익',data:gArr,backgroundColor:'#22d87a',stack:'a'}]},
+    data:{labels,datasets:[{label:t('leg-principal'),data:pArr,backgroundColor:'#2a5a3a',stack:'a'},{label:t('res-gain'),data:gArr,backgroundColor:'#22d87a',stack:'a'}]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmtKRW(ctx.raw)}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmtMoney(ctx.raw)}}},
       scales:{x:{stacked:true,ticks:{color:'#555a6b',font:{size:11},autoSkip:true,maxTicksLimit:10},grid:{display:false}},
-              y:{stacked:true,ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtKRW(v)},grid:{color:'rgba(255,255,255,.04)'}}}}
+              y:{stacked:true,ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtMoney(v)},grid:{color:'rgba(255,255,255,.04)'}}}}
   });
 }
+
+// =============================================
+// ① 포트폴리오 분산 시뮬레이터
+// =============================================
+const PF_COLORS=['#22d87a','#5b8fff','#f5a623','#a78bfa','#f05252'];
+let pfSlots=[{id:'spy',pct:60},{id:'schd',pct:40}];
+let pfChart=null;
+let pfDonut=null;
+
+function pfEtfOptions(){
+  return ETFS.map(e=>`<option value="${e.id}">${e.ticker} · ${e.name}</option>`).join('');
+}
+let pfLocked=[]; // 선택된 2개 슬롯 인덱스
+
+function renderPfSlots(){
+  const container=document.getElementById('portfolio-slots');
+  const showCheck=pfSlots.length>=3;
+  container.innerHTML=pfSlots.map((slot,i)=>{
+    const isLocked=pfLocked.includes(i);
+    const checkHtml=showCheck?`
+      <label style="display:flex;align-items:center;cursor:pointer;margin-right:4px;" title="${pfLocked.length===2&&!isLocked?'먼저 선택 해제 후 변경':'이 슬롯 고정'}">
+        <input type="checkbox" class="pf-lock" data-idx="${i}" ${isLocked?'checked':''}
+          style="width:15px;height:15px;cursor:pointer;accent-color:${PF_COLORS[i]};">
+      </label>`:'';
+    return`<div class="pf-slot" style="opacity:${showCheck&&pfLocked.length===2&&!isLocked?'0.45':'1'};transition:opacity .2s;">
+      ${checkHtml}
+      <div class="pf-color" style="background:${PF_COLORS[i]};"></div>
+      <select class="pf-select" data-idx="${i}">${ETFS.map(e=>`<option value="${e.id}"${e.id===slot.id?' selected':''}>${e.ticker} · ${e.name}</option>`).join('')}</select>
+      <input class="pf-pct" type="number" min="0" max="100" value="${slot.pct}" data-idx="${i}"
+        ${showCheck&&pfLocked.length===2&&!isLocked?'disabled':''}>
+      <span style="font-size:11px;color:var(--text3);">%</span>
+      ${pfSlots.length>1?`<button class="pf-del" data-idx="${i}">✕</button>`:''}
+    </div>`;
+  }).join('');
+  const total=pfSlots.reduce((a,b)=>a+b.pct,0);
+  const warn=document.getElementById('pf-pct-warn')||document.createElement('div');
+  warn.id='pf-pct-warn';
+  warn.style.cssText='font-size:12px;margin-top:6px;';
+  warn.style.color=total===100?'var(--green)':'var(--amber)';
+  warn.textContent=total===100?t('pf-ok-sum'):`⚠ ${t('pf-warn-sum').replace('%',total+'%')}`;
+  container.after(warn);
+
+  // 리셋 버튼: 비율이 하나라도 0이 아닐 때 표시
+  const resetBtn=document.getElementById('pf-reset-btn');
+  if(resetBtn){
+    const hasAnyPct=pfSlots.some(s=>s.pct>0);
+    resetBtn.style.display=hasAnyPct?'inline-block':'none';
+  }
+  container.querySelectorAll('.pf-select').forEach(el=>{
+    el.addEventListener('change',e=>{pfSlots[+el.dataset.idx].id=el.value;calcPf();});
+  });
+
+  // 체크박스: 최대 2개만 선택 가능
+  container.querySelectorAll('.pf-lock').forEach(el=>{
+    el.addEventListener('change',()=>{
+      const idx=+el.dataset.idx;
+      if(el.checked){
+        if(pfLocked.length>=2){ el.checked=false; return; }
+        pfLocked.push(idx);
+      } else {
+        pfLocked=pfLocked.filter(i=>i!==idx);
+      }
+      renderPfSlots();calcPf();
+    });
+  });
+
+  container.querySelectorAll('.pf-pct').forEach(el=>{
+    el.addEventListener('input',e=>{
+      const idx=+el.dataset.idx;
+      const rawVal=el.value===''?0:parseFloat(el.value);
+      if(isNaN(rawVal)) return;
+      pfSlots[idx].pct=Math.min(100,Math.max(0,rawVal));
+
+      let targetIdx;
+      if(pfLocked.length===2 && pfLocked.includes(idx)){
+        // 선택된 2개 슬롯 내에서만 조정
+        targetIdx=pfLocked.find(i=>i!==idx);
+        const sumExcept=pfSlots.reduce((a,b,i)=>i===targetIdx?a:a+b.pct,0);
+        pfSlots[targetIdx].pct=Math.max(0,100-sumExcept);
+      } else {
+        // 기본: 마지막 슬롯에 나머지 몰아줌
+        const lastIdx=pfSlots.length-1;
+        targetIdx=idx===lastIdx ? lastIdx-1 : lastIdx;
+        const sumExceptTarget=pfSlots.reduce((a,b,i)=>i===targetIdx?a:a+b.pct,0);
+        pfSlots[targetIdx].pct=Math.max(0,100-sumExceptTarget);
+      }
+
+      // 포커스 유지: 다른 input value만 직접 교체
+      container.querySelectorAll('.pf-pct').forEach(other=>{
+        if(+other.dataset.idx!==idx){
+          other.value=pfSlots[+other.dataset.idx].pct;
+        }
+      });
+
+      const total=pfSlots.reduce((a,b)=>a+b.pct,0);
+      const warn=document.getElementById('pf-pct-warn');
+      if(warn){
+        warn.style.color=total===100?'var(--green)':'var(--amber)';
+        warn.textContent=total===100?t('pf-ok-sum'):`⚠ ${t('pf-warn-sum').replace('%',total+'%')}`;
+      }
+      calcPf();
+    });
+    el.addEventListener('blur',()=>{ renderPfSlots();calcPf(); });
+  });
+
+  container.querySelectorAll('.pf-del').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const idx=+el.dataset.idx;
+      pfLocked=pfLocked.filter(i=>i!==idx).map(i=>i>idx?i-1:i);
+      pfSlots.splice(idx,1);
+      renderPfSlots();calcPf();
+    });
+  });
+}
+document.getElementById('pf-add-btn').addEventListener('click',()=>{
+  if(pfSlots.length>=5)return;
+  pfSlots.push({id:'gld',pct:0});
+  pfLocked=[];
+  renderPfSlots();calcPf();
+});
+
+// 리셋: 모든 슬롯의 비율만 0으로 초기화
+document.getElementById('pf-reset-btn').addEventListener('click',()=>{
+  pfSlots.forEach(s=>{ s.pct=0; });
+  renderPfSlots();calcPf();
+});
+
+function calcPf(){
+  const monthly=parseFloat(document.getElementById('pf-monthly').value);
+  const years=parseInt(document.getElementById('pf-years').value);
+  document.getElementById('pf-monthly-out').textContent=fmtMoney(monthly);
+  document.getElementById('pf-years-out').textContent=years+t('unit-year');
+  // 결과 카드 레이블 업데이트
+  const pfPrinLbl=document.getElementById('lbl-pf-principal');
+  const pfTotLbl=document.getElementById('lbl-pf-total');
+  const pfRateLbl=document.getElementById('lbl-pf-rate');
+  const pfCagrLbl=document.getElementById('lbl-pf-cagr');
+  if(pfPrinLbl) pfPrinLbl.textContent=t('res-principal');
+  if(pfTotLbl) pfTotLbl.textContent=t('res-total');
+  if(pfRateLbl) pfRateLbl.textContent=t('pf-rate');
+  if(pfCagrLbl) pfCagrLbl.textContent=t('pf-cagr');
+  const total100=pfSlots.reduce((a,b)=>a+b.pct,0);
+  if(total100!==100){document.getElementById('pf-total').textContent=currentLang==='en'?'Set total to 100%':'비율 합계를 100%로';return;}
+
+  const labels=['0'+t('unit-year')];
+  for(let y=1;y<=years;y++) labels.push(y+t('unit-year'));
+
+  const datasets=[];
+  let blendedTotal=0,principal=0;
+  const blendArr=[0];
+
+  // 각 ETF별 독립 계산 후 비율 가중합
+  const seriesArr=pfSlots.map(slot=>{
+    const e=ETFS.find(x=>x.id===slot.id);
+    const rate=(e?e.rate:8)/100;
+    const mr=rate/12;
+    let tot=0;
+    const arr=[0];
+    for(let y=1;y<=years;y++){
+      for(let m=0;m<12;m++) tot=(tot+monthly*(slot.pct/100))*(1+mr);
+      arr.push(Math.round(tot));
+    }
+    return{slot,arr,e};
+  });
+
+  // 블렌드 합산 (각 연도별 모든 ETF 값의 합)
+  for(let i=1;i<=years;i++){
+    blendArr.push(seriesArr.reduce((s,{arr})=>s+(arr[i]||0),0));
+  }
+
+  const finalTotal=blendArr[blendArr.length-1];
+  const prin=monthly*years*12;
+  document.getElementById('pf-principal').textContent=fmtMoney(prin);
+  document.getElementById('pf-total').textContent=fmtMoney(finalTotal);
+  document.getElementById('pf-rate').textContent='+'+((finalTotal-prin)/prin*100).toFixed(1)+'%';
+  // CAGR
+  const cagr=((Math.pow(finalTotal/prin,1/years)-1)*100).toFixed(1);
+  document.getElementById('pf-cagr').textContent=cagr+'%';
+
+  // 상단 범례 (라인차트용)
+  const leg=document.getElementById('pf-legend');
+  leg.innerHTML=seriesArr.map(({slot,e},i)=>`
+    <div class="leg-item"><div class="leg-dot" style="background:${PF_COLORS[i]};"></div>${e?e.ticker:'?'} ${slot.pct}%</div>`).join('');
+  leg.innerHTML+=`<div class="leg-item"><div class="leg-dot" style="background:#fff;"></div>${currentLang==='en'?'Total':'합계'}</div>`;
+
+  // 도넛 차트
+  const donutTotal=pfSlots.reduce((a,b)=>a+b.pct,0);
+  document.getElementById('pf-donut-total-pct').textContent=donutTotal+'%';
+  document.getElementById('pf-donut-total-pct').style.color=donutTotal===100?'var(--green)':'var(--amber)';
+
+  // 도넛 아래 범례
+  document.getElementById('pf-donut-legend').innerHTML=seriesArr.map(({slot,e},i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${PF_COLORS[i]};flex-shrink:0;"></div>
+        <span style="font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace;">${e?e.ticker:'?'}</span>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:${PF_COLORS[i]};font-family:'JetBrains Mono',monospace;">${slot.pct}%</span>
+    </div>`).join('');
+
+  if(pfDonut)pfDonut.destroy();
+  pfDonut=new Chart(document.getElementById('pf-donut'),{
+    type:'doughnut',
+    data:{
+      labels:seriesArr.map(({slot,e})=>`${e?e.ticker:'?'} ${slot.pct}%`),
+      datasets:[{
+        data:pfSlots.map(s=>s.pct),
+        backgroundColor:PF_COLORS.slice(0,pfSlots.length),
+        borderColor:PF_COLORS.slice(0,pfSlots.length).map(c=>c+'aa'),
+        borderWidth:2,
+        hoverOffset:8
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      cutout:'65%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` ${ctx.label}`}}
+      }
+    }
+  });
+
+  if(pfChart)pfChart.destroy();
+
+  const pfPrincipal=monthly*years*12;
+
+  pfChart=new Chart(document.getElementById('pf-chart'),{
+    type:'line',
+    data:{labels,datasets:[
+      ...seriesArr.map(({slot,arr,e},i)=>({label:`${e?e.ticker:'?'} (${slot.pct}%)`,data:[0,...arr],borderColor:PF_COLORS[i],backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,borderDash:[4,3]})),
+      {label:t('pf-total'),data:[0,...blendArr],borderColor:'#fff',backgroundColor:'rgba(255,255,255,0.05)',borderWidth:2.5,pointRadius:0,fill:true}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:4}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},
+      scales:{
+        x:{ticks:{color:'#555a6b',font:{size:11},autoSkip:true,maxTicksLimit:10},grid:{display:false}},
+        y:{ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtMoney(v)},grid:{color:'rgba(255,255,255,.04)'}}
+      },
+      animation:{onComplete:()=>{
+        const box=document.getElementById('pf-end-labels');
+        if(!box||!pfChart) return;
+        box.innerHTML='';
+        const canvasH=pfChart.canvas.offsetHeight;
+
+        const items=[];
+        pfChart.data.datasets.forEach((ds,i)=>{
+          const meta=pfChart.getDatasetMeta(i);
+          if(!meta.visible||!meta.data.length) return;
+          const lastPt=meta.data[meta.data.length-1];
+          const val=ds.data[ds.data.length-1];
+          if(!val||val===0) return;
+          const isTotal=ds.borderColor==='#fff';
+
+          // 합계는 전체 원금, 개별 ETF는 비율에 맞는 원금으로 계산
+          let basePrincipal=pfPrincipal;
+          if(!isTotal){
+            // dataset 순서 = seriesArr 순서 → pct 비율 추출
+            const slot=pfSlots[i];
+            if(slot) basePrincipal=pfPrincipal*(slot.pct/100);
+          }
+          const ret=((val-basePrincipal)/basePrincipal*100).toFixed(1);
+          const sign=parseFloat(ret)>=0?'+':'';
+          items.push({y:lastPt.y, ret, sign, color:isTotal?'#fff':ds.borderColor, isTotal, fontSize:isTotal?13:11});
+        });
+
+        // y좌표 겹침 방지
+        items.sort((a,b)=>a.y-b.y);
+        for(let i=1;i<items.length;i++){
+          if(items[i].y-items[i-1].y<18) items[i].y=items[i-1].y+18;
+        }
+
+        items.forEach(({y,ret,sign,color,isTotal,fontSize})=>{
+          const pct=Math.max(4,Math.min(96,(y/canvasH)*100));
+          const lbl=document.createElement('div');
+          lbl.style.cssText=`
+            position:absolute;right:4px;top:${pct}%;
+            transform:translateY(-50%);
+            font-size:${fontSize}px;font-weight:700;
+            font-family:'JetBrains Mono',monospace;
+            color:${color};white-space:nowrap;
+            background:rgba(13,15,20,0.75);
+            padding:2px 5px;border-radius:4px;
+            border-left:2px solid ${color};
+            line-height:1.4;
+          `;
+          lbl.textContent=`${sign}${ret}%`;
+          box.appendChild(lbl);
+        });
+      }}
+    }
+  });
+}
+['pf-monthly','pf-years'].forEach(id=>document.getElementById(id).addEventListener('input',calcPf));
+renderPfSlots();calcPf();
+
+// =============================================
+// ② 목표금액 역산 계산기
+// =============================================
+let goalMode='monthly';
+function syncGoalEtf(){
+  const e=ETFS.find(x=>x.id===selectedId);
+  if(!e) return;
+  document.getElementById('goal-etf-label').textContent=e.ticker;
+  document.getElementById('goal-rate-display').textContent=e.rate.toFixed(1)+'%';
+  document.getElementById('goal-etf-name-display').textContent=e.name;
+}
+function calcGoal(){
+  const goal=parseFloat(document.getElementById('goal-amount').value)||100000000;
+  const e=ETFS.find(x=>x.id===selectedId);
+  const rate=(e?e.rate:10)/100;
+  document.getElementById('goal-amount-display').textContent=fmtMoney(goal);
+  syncGoalEtf();
+  const mr=rate/12;
+
+  // 주수 계산용
+  const shareInfo=e&&ETF_SHARE[e.id];
+  const sharePrice=shareInfo?(shareInfo.krw?shareInfo.price:Math.round(shareInfo.price*USD_KRW)):null;
+
+  if(goalMode==='monthly'){
+    const monthly=parseFloat(document.getElementById('goal-monthly').value);
+    document.getElementById('goal-monthly-out').textContent='₩'+monthly.toLocaleString('ko-KR');
+    let total=0,months=0;
+    while(total<goal&&months<600){total=(total+monthly)*(1+mr);months++;}
+    const yrs=Math.floor(months/12),mos=months%12;
+    const principal=monthly*months;
+    document.getElementById('goal-res-main').textContent=months>=600
+      ?(currentLang==='en'?'600+ months':'600개월 이상')
+      :`${yrs}${t('unit-year')} ${mos}${t('unit-month')}`;
+    document.getElementById('goal-res-label').textContent='목표 달성까지';
+    document.getElementById('goal-res-principal').textContent=fmtMoney(principal);
+    document.getElementById('goal-res-gain').textContent=fmtMoney(Math.max(0,goal-principal));
+
+    if(sharePrice){
+      const shares=Math.floor(goal/sharePrice);
+      document.getElementById('goal-shares-card').style.display='block';
+      document.getElementById('goal-res-shares').textContent=shares.toLocaleString('ko-KR')+(currentLang==='en'?' shares':'주');
+      document.getElementById('goal-res-price-per-share').textContent=currentLang==='en'
+        ?`Current price: ${shareInfo.krw?'₩'+sharePrice.toLocaleString('ko-KR'):'$'+shareInfo.price+' (≈₩'+sharePrice.toLocaleString('ko-KR')+')'}`
+        :`현재 주가 ${shareInfo.krw?'₩'+sharePrice.toLocaleString('ko-KR'):'$'+shareInfo.price+' (≈₩'+sharePrice.toLocaleString('ko-KR')+')'}`;
+    } else {
+      document.getElementById('goal-shares-card').style.display='none';
+    }
+
+    document.getElementById('goal-res-label').textContent=currentLang==='en'?'Time to Goal':t('goal-res-label');
+    document.getElementById('goal-insight').textContent= currentLang==='en'
+      ?`At ${(rate*100).toFixed(1)}% return (${e?e.ticker:'ETF'}), investing ${fmtMoney(monthly)}/month reaches ${fmtMoney(goal)} in ~${yrs}y ${mos}m. Principal: ${fmtMoney(principal)}, gain: ${fmtMoney(Math.max(0,goal-principal))}.`+(sharePrice?` ~${Math.floor(goal/sharePrice).toLocaleString('ko-KR')} shares at goal.`:'')
+      :`${e?e.ticker:'선택 ETF'} 수익률 ${(rate*100).toFixed(1)}% 기준, 월 ${fmtMoney(monthly)} 투자 시 ${fmtMoney(goal)} 달성까지 약 ${yrs}년 ${mos}개월 소요. 총 납입 원금 ${fmtMoney(principal)}, 복리 수익 ${fmtMoney(Math.max(0,goal-principal))}.`+(sharePrice?` 목표 달성 시 약 ${Math.floor(goal/sharePrice).toLocaleString('ko-KR')}주 보유.`:'');
+  } else {
+    const period=parseInt(document.getElementById('goal-period').value);
+    document.getElementById('goal-period-out').textContent=period+t('unit-year');
+    const months=period*12;
+    const needed=goal*mr/(Math.pow(1+mr,months)-1);
+    const principal=needed*months;
+    document.getElementById('goal-res-main').textContent=fmtMoney(Math.ceil(needed));
+    document.getElementById('goal-res-label').textContent=currentLang==='en'?'Monthly Needed':'필요 월 납입액';
+    document.getElementById('goal-res-principal').textContent=fmtMoney(Math.round(principal));
+    document.getElementById('goal-res-gain').textContent=fmtMoney(Math.max(0,goal-principal));
+
+    if(sharePrice){
+      const shares=Math.floor(goal/sharePrice);
+      document.getElementById('goal-shares-card').style.display='block';
+      document.getElementById('goal-res-shares').textContent=shares.toLocaleString('ko-KR')+(currentLang==='en'?' shares':'주');
+      document.getElementById('goal-res-price-per-share').textContent=currentLang==='en'
+        ?`Current price: ${shareInfo.krw?'₩'+sharePrice.toLocaleString('ko-KR'):'$'+shareInfo.price+' (≈₩'+sharePrice.toLocaleString('ko-KR')+')'}`
+        :`현재 주가 ${shareInfo.krw?'₩'+sharePrice.toLocaleString('ko-KR'):'$'+shareInfo.price+' (≈₩'+sharePrice.toLocaleString('ko-KR')+')'}`;
+    } else {
+      document.getElementById('goal-shares-card').style.display='none';
+    }
+
+    document.getElementById('goal-insight').textContent= currentLang==='en'
+      ?`At ${(rate*100).toFixed(1)}% return (${e?e.ticker:'ETF'}), to reach ${fmtMoney(goal)} in ${period} years you need ${fmtMoney(Math.ceil(needed))}/month. Principal: ${fmtMoney(Math.round(principal))}, gain: ${fmtMoney(Math.max(0,goal-principal))}.`+(sharePrice?` ~${Math.floor(goal/sharePrice).toLocaleString('ko-KR')} shares at goal.`:'')
+      :`${e?e.ticker:'선택 ETF'} 수익률 ${(rate*100).toFixed(1)}% 기준, ${period}년 안에 ${fmtMoney(goal)}을 달성하려면 매월 ${fmtMoney(Math.ceil(needed))} 투자 필요. 총 납입 원금 ${fmtMoney(Math.round(principal))}, 복리 수익 ${fmtMoney(Math.max(0,goal-principal))}.`+(sharePrice?` 목표 달성 시 약 ${Math.floor(goal/sharePrice).toLocaleString('ko-KR')}주 보유.`:'');
+  }
+}
+document.querySelectorAll('.goal-preset').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.goal-preset').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('goal-amount').value=btn.dataset.val;
+    calcGoal();
+  });
+});
+document.querySelectorAll('.goal-mode-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.goal-mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');goalMode=btn.dataset.mode;
+    document.getElementById('goal-input-monthly').style.display=goalMode==='monthly'?'block':'none';
+    document.getElementById('goal-input-period').style.display=goalMode==='period'?'block':'none';
+    calcGoal();
+  });
+});
+['goal-amount','goal-rate','goal-monthly','goal-period'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('input',calcGoal);
+});
+calcGoal();
+
+// =============================================
+// ③ 세금 반영 계산기
+// =============================================
+
+function updateTaxInfo(){
+  const info=TAX_INFO[taxType];
+  document.getElementById('tax-info-box').innerHTML=info.desc[currentLang].replace(/\n/g,'<br>');
+  // 버튼 레이블도 업데이트
+  document.querySelectorAll('.tax-type-btn').forEach(btn=>{
+    const ti=TAX_INFO[btn.dataset.type];
+    if(ti) btn.textContent=ti.label[currentLang];
+  });
+}
+function calcTax(){
+  const totalVal=parseFloat(document.getElementById('tax-total').value);
+  const principal=parseFloat(document.getElementById('tax-principal').value);
+  const annualDiv=parseFloat(document.getElementById('tax-div').value);
+  document.getElementById('tax-total-out').textContent=fmtMoney(totalVal);
+  document.getElementById('tax-principal-out').textContent=fmtMoney(principal);
+  document.getElementById('tax-div-out').textContent=fmtMoney(annualDiv);
+
+  const info=TAX_INFO[taxType];
+  const gain=Math.max(0,totalVal-principal);
+  let gainTaxAmt=0, divTaxAmt=0;
+
+  if(taxComprehensive==='y'){
+    // 종합과세: 금융소득(배당+이자) 합산 → 누진세율 (6~45%)
+    // 금융소득 2,000만원까지는 원천징수(15.4%)로 분리, 초과분만 종합과세
+    const financialIncome=annualDiv; // 배당+이자 합산
+    const separateDiv=Math.min(financialIncome, 20000000); // 2천만원까지 분리과세
+    const comprehensiveDiv=Math.max(0,financialIncome-20000000); // 초과분 종합과세
+
+    // 분리과세 부분: 15.4%
+    divTaxAmt=Math.round(separateDiv*0.154);
+
+    // 종합과세 부분: 누진세율 (간이 계산 - 금융소득 초과분 기준)
+    // 실제로는 다른 소득과 합산이지만 여기선 금융소득만으로 계산
+    const progressiveTax=(income)=>{
+      // 2024년 기준 소득세율 (지방세 포함 ×1.1)
+      const brackets=[
+        {limit:14000000, rate:0.06},
+        {limit:50000000, rate:0.15},
+        {limit:88000000, rate:0.24},
+        {limit:150000000, rate:0.35},
+        {limit:300000000, rate:0.38},
+        {limit:500000000, rate:0.40},
+        {limit:1000000000, rate:0.42},
+        {limit:Infinity, rate:0.45},
+      ];
+      let tax=0, prev=0;
+      for(const b of brackets){
+        if(income<=prev) break;
+        const slice=Math.min(income,b.limit)-prev;
+        tax+=slice*b.rate;
+        prev=b.limit;
+      }
+      return Math.round(tax*1.1); // 지방세 10% 포함
+    };
+    divTaxAmt+=progressiveTax(comprehensiveDiv);
+
+    // 양도세는 분리과세와 동일 (종합과세 적용 안 됨)
+    const taxableGain=Math.max(0,gain-info.gainExempt);
+    gainTaxAmt=Math.round(taxableGain*info.gainTax);
+  } else {
+    // 분리과세: 단일세율 원천징수
+    const taxableGain=Math.max(0,gain-info.gainExempt);
+    gainTaxAmt=Math.round(taxableGain*info.gainTax);
+    divTaxAmt=Math.round(annualDiv*info.divTax);
+  }
+
+  const totalTax=gainTaxAmt+divTaxAmt;
+  const afterTax=totalVal-gainTaxAmt;
+  const effectiveRate=gain>0?((totalTax/gain)*100).toFixed(1):'0';
+
+  document.getElementById('tax-gain-before').textContent=fmtMoney(gain);
+  document.getElementById('tax-amount').textContent=fmtMoney(totalTax);
+  document.getElementById('tax-after').textContent=fmtMoney(afterTax);
+  document.getElementById('tax-rate').textContent=effectiveRate+'%';
+
+  // 기준(미국 ETF 분리과세)과 비교
+  const compareBox=document.getElementById('tax-compare-box');
+  if(taxType==='us-etf' && taxComprehensive==='n'){
+    // 기준 자체이므로 비교 숨김
+    compareBox.style.display='none';
+  } else {
+    // 기준: 미국 ETF 분리과세 계산
+    const baseInfo=TAX_INFO['us-etf'];
+    const baseTaxableGain=Math.max(0,gain-baseInfo.gainExempt);
+    const baseGainTax=Math.round(baseTaxableGain*baseInfo.gainTax);
+    const baseDivTax=Math.round(annualDiv*baseInfo.divTax);
+    const baseTotalTax=baseGainTax+baseDivTax;
+    const baseAfterTax=totalVal-baseGainTax;
+
+    const taxDiff=totalTax-baseTotalTax;   // 양수=증세, 음수=절세
+    const afterDiff=afterTax-baseAfterTax; // 양수=더 받음, 음수=덜 받음
+
+    compareBox.style.display='block';
+    const taxDiffEl=document.getElementById('tax-compare-tax');
+    const afterDiffEl=document.getElementById('tax-compare-after');
+    const badge=document.getElementById('tax-compare-badge');
+
+    const sign=taxDiff>0?'+':'';
+    taxDiffEl.textContent=sign+fmtMoney(taxDiff);
+    taxDiffEl.style.color=taxDiff>0?'var(--red)':taxDiff<0?'var(--green)':'var(--text2)';
+
+    const afterSign=afterDiff>=0?'+':'';
+    afterDiffEl.textContent=afterSign+fmtMoney(afterDiff);
+    afterDiffEl.style.color=afterDiff>0?'var(--green)':afterDiff<0?'var(--red)':'var(--text2)';
+
+    if(taxDiff<0){
+      badge.textContent=t('tax-saving')+` (${Math.abs(taxDiff/gain*100).toFixed(1)}%p)`;
+      badge.style.cssText='margin-left:auto;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;background:rgba(34,216,122,.12);color:var(--green);border:1px solid rgba(34,216,122,.3);';
+    } else if(taxDiff>0){
+      badge.textContent=t('tax-extra')+` (+${(taxDiff/gain*100).toFixed(1)}%p)`;
+      badge.style.cssText='margin-left:auto;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;background:rgba(240,82,82,.1);color:var(--red);border:1px solid rgba(240,82,82,.3);';
+    } else {
+      badge.textContent=t('tax-same');
+      badge.style.cssText='margin-left:auto;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;background:var(--surface2);color:var(--text2);border:1px solid var(--border2);';
+    }
+  }
+
+  const tipMap={
+    ko:{
+      'us-etf': taxComprehensive==='y'
+        ?'⚠️ 종합과세: 금융소득 2,000만원 초과분이 다른 소득과 합산되어 최대 49.5%까지 과세됩니다. ISA·연금저축 활용으로 절세하세요.'
+        :'💡 분리과세: 배당 15%, 양도세 22% (250만원 공제). ISA 계좌 활용 시 추가 절세 가능.',
+      'kr-etf': taxComprehensive==='y'
+        ?'⚠️ 종합과세: 금융소득 2,000만원 초과 시 누진세율 적용. ISA 계좌로 전환하면 9.9% 분리과세로 절세 가능합니다.'
+        :'💡 분리과세: 배당·매매차익 15.4% 일괄 과세. 연간 2,000만원 초과 시 종합과세 대상.',
+      'isa':'💡 ISA 만기 시 연금저축으로 전환하면 추가 세액공제(300만원) 혜택을 받을 수 있습니다.',
+      'pension':'💡 연금저축+IRP 합산 900만원까지 세액공제(16.5%) 가능. 장기 운용 시 절세 효과 극대화.'
+    },
+    en:{
+      'us-etf': taxComprehensive==='y'
+        ?'⚠️ Comprehensive tax: financial income above ₩20M is aggregated with other income, taxed up to 49.5%. Consider ISA or pension accounts.'
+        :'💡 Withholding tax: 15% dividend, 22% capital gains (₩2.5M exempt). ISA accounts offer additional savings.',
+      'kr-etf': taxComprehensive==='y'
+        ?'⚠️ Comprehensive tax: progressive rates apply above ₩20M. Switching to ISA gives 9.9% separate tax instead.'
+        :'💡 Withholding tax: 15.4% flat on dividends and gains. Above ₩20M/year triggers comprehensive tax.',
+      'isa':'💡 Rolling over a matured ISA into a pension account gives an extra ₩3M tax credit.',
+      'pension':'💡 Combined pension + IRP up to ₩9M eligible for 16.5% tax credit. Maximize savings with long-term holding.'
+    }
+  };
+  const tip=tipMap[currentLang]||tipMap['ko'];
+  document.getElementById('tax-insight').textContent=currentLang==='ko'
+    ?`세전 수익 ${fmtMoney(gain)} 중 납부 세금 약 ${fmtMoney(totalTax)}, 실수령 ${fmtMoney(afterTax)} (실효세율 ${effectiveRate}%). ${tip[taxType]}`
+    :`Pre-tax gain ${fmtMoney(gain)}, estimated tax ${fmtMoney(totalTax)}, take-home ${fmtMoney(afterTax)} (effective rate ${effectiveRate}%). ${tip[taxType]}`;
+}
+document.querySelectorAll('.tax-type-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tax-type-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');taxType=btn.dataset.type;
+    updateTaxInfo();calcTax();
+  });
+});
+document.querySelectorAll('.tax-综합-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tax-综합-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');taxComprehensive=btn.dataset.val;calcTax();
+  });
+});
+['tax-total','tax-principal','tax-div'].forEach(id=>document.getElementById(id).addEventListener('input',calcTax));
+updateTaxInfo();calcTax();
+
+// =============================================
+// ④ ETF 비교
+// =============================================
+let cmpIds=['spy','qqq','schd'];
+const CMP_COLORS=['#22d87a','#5b8fff','#f5a623'];
+let cmpChart=null;
+
+function renderCmpSelects(){
+  document.getElementById('cmp-selects').innerHTML=cmpIds.map((id,i)=>`
+    <div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;">ETF ${i+1}</div>
+      <select class="cmp-select" data-idx="${i}">${ETFS.map(e=>`<option value="${e.id}"${e.id===id?' selected':''}>${e.ticker} · ${e.name}</option>`).join('')}</select>
+    </div>`).join('');
+  document.querySelectorAll('.cmp-select').forEach(el=>{
+    el.addEventListener('change',()=>{cmpIds[+el.dataset.idx]=el.value;calcCmp();});
+  });
+}
+
+function calcCmp(){
+  const monthly=parseFloat(document.getElementById('cmp-monthly').value);
+  const years=parseInt(document.getElementById('cmp-years').value);
+  document.getElementById('cmp-monthly-out').textContent='₩'+monthly.toLocaleString('ko-KR');
+  document.getElementById('cmp-years-out').textContent=years+t('unit-year');
+  const labels=['0'+t('unit-year')];
+  for(let y=1;y<=years;y++) labels.push(y+t('unit-year'));
+
+  const results=cmpIds.map((id,i)=>{
+    const e=ETFS.find(x=>x.id===id);
+    const rate=(e?e.rate:8)/100;
+    const mr=rate/12;
+    let tot=0,prin=0;
+    const arr=[0];
+    for(let y=1;y<=years;y++){
+      for(let m=0;m<12;m++){tot=(tot+monthly)*(1+mr);prin+=monthly;}
+      arr.push(Math.round(tot));
+    }
+    return{e,arr,finalTotal:arr[arr.length-1],principal:prin,color:CMP_COLORS[i]};
+  });
+
+  // 범례
+  document.getElementById('cmp-legend').innerHTML=results.map(({e,color})=>`
+    <div class="leg-item"><div class="leg-dot" style="background:${color};"></div>${e?e.ticker:'?'}</div>`).join('');
+
+  if(cmpChart)cmpChart.destroy();
+  // 결과 카드
+  const principal=monthly*years*12;
+
+  // 차트 끝에 수익률 레이블 플러그인
+  const endLabelPlugin={
+    id:'cmpEndLabels',
+    afterDatasetsDraw(chart){
+      const ctx=chart.ctx;
+      chart.data.datasets.forEach((ds,i)=>{
+        const meta=chart.getDatasetMeta(i);
+        if(!meta.visible) return;
+        const lastPt=meta.data[meta.data.length-1];
+        if(!lastPt) return;
+        const val=ds.data[ds.data.length-1];
+        if(!val) return;
+        const ret=((val-principal)/principal*100).toFixed(1);
+        ctx.save();
+        ctx.font='bold 11px "JetBrains Mono",monospace';
+        ctx.fillStyle=ds.borderColor;
+        ctx.textAlign='left';
+        ctx.textBaseline='middle';
+        ctx.fillText(`+${ret}%`, lastPt.x+6, lastPt.y);
+        ctx.restore();
+      });
+    }
+  };
+
+  cmpChart=new Chart(document.getElementById('cmp-chart'),{
+    type:'line',
+    data:{labels,datasets:results.map(({e,arr,color})=>({
+      label:e?e.ticker:'?',data:arr,borderColor:color,backgroundColor:'transparent',
+      borderWidth:2,pointRadius:0,tension:0.3
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,
+      layout:{padding:{right:70}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},
+      scales:{
+        x:{ticks:{color:'#555a6b',font:{size:11},autoSkip:true,maxTicksLimit:10},grid:{display:false}},
+        y:{ticks:{color:'#555a6b',font:{size:11},callback:v=>fmtMoney(v)},grid:{color:'rgba(255,255,255,.04)'}}
+      }},
+    plugins:[endLabelPlugin]
+  });
+
+  document.getElementById('cmp-cards').innerHTML=results.map(({e,finalTotal,color},i)=>`
+    <div class="result-card" style="border-color:${color}33;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:${color};">${e?e.ticker:'?'}</div>
+      <div class="stat-lbl">${t('cmp-final')}</div>
+      <div style="font-size:17px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${color};margin-bottom:6px;">${fmtMoney(finalTotal)}</div>
+      <div class="stat-lbl">${t('cmp-return')}</div>
+      <div style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--green);">+${((finalTotal-principal)/principal*100).toFixed(1)}%</div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text3);">${currentLang==='en'?`Avg ${e?e.rate:8}% assumed`:`연평균 ${e?e.rate:8}% 가정`}</div>
+    </div>`).join('');
+}
+['cmp-monthly','cmp-years'].forEach(id=>document.getElementById(id).addEventListener('input',calcCmp));
+renderCmpSelects();calcCmp();
 
 document.querySelectorAll('.cat-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -873,6 +2303,12 @@ document.querySelectorAll('.cat-btn').forEach(btn=>{
   document.getElementById(id).addEventListener('input',calcBacktest);
 });
 renderGrid('all');updateDetail();
+
+// 환율 입력 변경시 전체 재계산
+document.getElementById('fx-rate').addEventListener('input',()=>{
+  USD_KRW=getUsdKrw();
+  calcSim();calcBacktest();calcGoal();calcPf();calcCmp();calcTax();
+});
 </script>
 </body>
 </html>
