@@ -175,9 +175,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="result-card"><div class="result-lbl">실질 평가금액 <span style="font-size:10px;color:var(--text3);">(물가 반영)</span></div><div class="result-val" style="color:var(--blue);" id="bt-real"></div></div>
       <div class="result-card"><div class="result-lbl">누적 수익률</div><div class="result-val" id="bt-rate" style="color:var(--amber);"></div></div>
     </div>
-    <div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;">
+    <div class="result-card" id="bt-div-card" style="display:none;margin-bottom:20px;border-color:rgba(34,216,122,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:600;color:var(--green);">💰 배당금 상세</span>
+        <span style="font-size:11px;color:var(--text3);">같은 기간 받은 배당금 추정</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div><div class="stat-lbl">누적 배당금 수령</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-total"></div></div>
+        <div><div class="stat-lbl">연평균 배당금</div><div class="stat-val" style="color:var(--green);font-size:18px;" id="bt-div-annual"></div></div>
+        <div><div class="stat-lbl">평균 배당수익률</div><div class="stat-val" style="color:var(--amber);font-size:18px;" id="bt-div-yield"></div></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;" id="bt-legend">
       <div class="leg-item"><div class="leg-dot" style="background:#2a5a3a;"></div>원금 누계</div>
-      <div class="leg-item"><div class="leg-dot" style="background:#22d87a;"></div>명목 평가금액</div>
+      <div class="leg-item" id="bt-leg-div" style="display:none;"><div class="leg-dot" style="background:#f5a623;"></div>배당 수익</div>
+      <div class="leg-item" id="bt-leg-cap"><div class="leg-dot" style="background:#22d87a;"></div>수익 (명목)</div>
       <div class="leg-item"><div class="leg-dot" style="background:#5b8fff;"></div>실질 평가금액 (물가 반영)</div>
       <div class="leg-item"><div class="leg-dot" style="background:rgba(240,82,82,0.5);border:1px solid #f05252;"></div>연간 물가상승률</div>
     </div>
@@ -206,6 +218,43 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
     <div class="chart-wrap"><canvas id="sim-chart"></canvas></div>
     <div class="insight" id="insight"></div>
+    <!-- 배당 ETF 전용 카드 -->
+    <div class="result-card" id="sim-div-card" style="display:none;margin-top:16px;border-color:rgba(34,216,122,.3);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="font-size:13px;font-weight:600;color:var(--green);">💰 배당금 상세 (설정 기간 기준)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;">
+        <div class="result-card" style="margin:0;">
+          <div class="result-lbl">예상 연간 배당금</div>
+          <div class="result-val" style="color:var(--green);font-size:18px;" id="sim-div-annual"></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">최종 평가금액 기준</div>
+        </div>
+        <div class="result-card" style="margin:0;">
+          <div class="result-lbl">예상 월 배당금</div>
+          <div class="result-val" style="color:var(--green);font-size:18px;" id="sim-div-monthly"></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">매달 통장에 들어오는 금액</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:14px;">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">1주당 배당금 & 보유 주수 추정</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div><div class="stat-lbl">현재 주가 (달러)</div><div class="stat-val" style="font-size:14px;" id="sim-share-price"></div></div>
+          <div><div class="stat-lbl">연간 1주당 배당금</div><div class="stat-val pos" style="font-size:14px;" id="sim-dps"></div></div>
+          <div><div class="stat-lbl">예상 보유 주수</div><div class="stat-val" style="font-size:14px;color:var(--blue);" id="sim-shares"></div></div>
+        </div>
+      </div>
+      <!-- 연도별 배당금 성장 차트 -->
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <span style="font-size:12px;color:var(--text3);">📈 연도별 1주당 배당금(DPS) 역사적 추이</span>
+          <div style="display:flex;gap:12px;">
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:#22d87a;display:inline-block;"></span>1주당 배당금 (DPS)</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);"><span style="width:10px;height:10px;border-radius:2px;background:rgba(245,166,35,0.7);display:inline-block;"></span>전년 대비 증가율</span>
+          </div>
+        </div>
+        <div style="position:relative;width:100%;height:220px;"><canvas id="div-growth-chart"></canvas></div>
+      </div>
+    </div>
   </div>
   <div class="disclaimer">※ 본 시뮬레이션은 역사적 데이터를 기반으로 한 참고용 계산이며, 미래 수익을 보장하지 않습니다. 실제 투자 결과는 시장 상황, 환율, 세금, 수수료에 따라 크게 달라질 수 있습니다.</div>
 </div>
@@ -387,7 +436,59 @@ function fmtKRW(n){
   return'₩'+Math.round(n).toLocaleString('ko-KR');
 }
 
-// 미국 연간 CPI 물가상승률 (BLS 기준, %)
+// ETF 주가 및 1주당 배당금 (2024년 기준, USD)
+const ETF_SHARE = {
+  'schd':  {price:26.5,  dps:1.05,  freq:'분기'},
+  'vym':   {price:128.0, dps:3.54,  freq:'분기'},
+  'jepi':  {price:58.2,  dps:4.76,  freq:'월'},
+  'tiger-div':{price:15000, dps:550, freq:'월', krw:true},
+  'gdx':   {price:42.0,  dps:0.60,  freq:'반기'},
+  'xle':   {price:91.0,  dps:3.12,  freq:'분기'},
+  'hyg':   {price:78.5,  dps:4.55,  freq:'월'},
+  'vnq':   {price:85.0,  dps:3.60,  freq:'분기'},
+};
+
+// ETF별 연도별 1주당 배당금(DPS) 실제 역사 데이터 (USD, split 조정)
+const DPS_HISTORY = {
+  'schd': {
+    yrs: [2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [0.40, 0.45, 0.52, 0.55, 0.58, 0.62, 0.67, 0.74, 0.76, 0.82, 0.90, 0.97, 1.05]
+  },
+  'vym': {
+    yrs: [2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [1.70, 1.85, 2.10, 2.12, 2.25, 2.44, 2.73, 2.92, 2.82, 2.94, 3.16, 3.38, 3.54]
+  },
+  'jepi': {
+    yrs: [2020,2021,2022,2023,2024],
+    dps: [2.10, 3.45, 6.25, 5.02, 4.76]
+  },
+  'tiger-div': {
+    yrs: [2022,2023,2024],
+    dps: [380, 510, 550],
+    krw: true
+  },
+  'gdx': {
+    yrs: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [0.12, 0.10, 0.18, 0.22, 0.25, 0.35, 0.42, 0.48, 0.52, 0.60]
+  },
+  'xle': {
+    yrs: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [1.85, 1.68, 1.74, 2.10, 2.18, 1.87, 2.20, 3.05, 3.12, 3.12]
+  },
+  'hyg': {
+    yrs: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [4.20, 4.05, 4.10, 4.50, 4.35, 4.10, 3.85, 4.30, 4.55, 4.55]
+  },
+  'vnq': {
+    yrs: [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+    dps: [2.90, 3.10, 3.20, 3.25, 3.40, 3.10, 3.25, 3.38, 3.52, 3.60]
+  },
+};
+
+// 환율 (USD→KRW 추정)
+const USD_KRW = 1380;
+
+
 const CPI = {
   2005:3.4,2006:3.2,2007:2.8,2008:3.8,2009:-0.4,
   2010:1.6,2011:3.2,2012:2.1,2013:1.5,2014:1.6,
@@ -396,6 +497,7 @@ const CPI = {
 };
 
 let btChart=null;
+let divGrowthChart=null;
 
 function calcBacktest(){
   const e=ETFS.find(x=>x.id===selectedId);if(!e)return;
@@ -419,24 +521,43 @@ function calcBacktest(){
 
   // 월별로 계산 (연 수익률 → 월 수익률)
   let total=0,principal=0;
-  const nominals=[0],principals=[0],reals=[0],labels=[startYr-1+''];
+  const nominals=[0],principals=[0],reals=[0],capGains=[0],divAccum=[0],labels=[startYr-1+''];
   const cpiByYear=[];
-  let realDeflator=1; // 누적 실질 가치 조정 계수
+  let realDeflator=1;
+  let totalDividend=0;
+  const divData=e.isDividend&&e.divKey?DIV_YIELDS[e.divKey]:null;
 
   validPairs.forEach(({yr,ret})=>{
     const monthlyRet=Math.pow(1+ret/100,1/12)-1;
     const cpi=(CPI[yr]||2.5)/100;
-    const monthCpi=Math.pow(1+cpi,1/12)-1;
+    const prevTotal=total;
 
     for(let m=0;m<12;m++){
       total=(total+monthly)*(1+monthlyRet);
       principal+=monthly;
     }
+
+    // 배당금 계산: 해당 연도 평균 잔고 × 배당수익률
+    let yearDiv=0;
+    if(divData&&divData.yrs){
+      const divIdx=divData.yrs.indexOf(yr);
+      if(divIdx>=0){
+        const avgBalance=(total+prevTotal)/2;
+        yearDiv=avgBalance*(divData.yields[divIdx]/100);
+        totalDividend+=yearDiv;
+      }
+    }
     realDeflator*=(1+cpi);
     const realVal=total/realDeflator;
+    const gain=Math.max(0,total-principal);
+    const divCumul=Math.round(totalDividend);
+    const capGain=Math.max(0,gain-divCumul);
+
     nominals.push(Math.round(total));
     principals.push(Math.round(principal));
     reals.push(Math.round(realVal));
+    divAccum.push(divCumul);
+    capGains.push(capGain);
     labels.push(yr+'');
     cpiByYear.push({yr,cpi:CPI[yr]||2.5});
   });
@@ -452,12 +573,39 @@ function calcBacktest(){
   document.getElementById('bt-real').textContent=fmtKRW(finalReal);
   document.getElementById('bt-rate').textContent='+'+gainRate+'%';
 
+  // 배당 카드
+  const divCard=document.getElementById('bt-div-card');
+  if(e.isDividend&&totalDividend>0){
+    divCard.style.display='block';
+    document.getElementById('bt-div-total').textContent=fmtKRW(Math.round(totalDividend));
+    document.getElementById('bt-div-annual').textContent=fmtKRW(Math.round(totalDividend/years));
+    const avgYield=divData&&divData.yields?
+      (divData.yields.reduce((a,b)=>a+b,0)/divData.yields.length).toFixed(1):'—';
+    document.getElementById('bt-div-yield').textContent=avgYield+'%';
+  } else {
+    divCard.style.display='none';
+  }
+
   const totalCpiInflation=((realDeflator-1)*100).toFixed(0);
+  const hasDivData=e.isDividend&&totalDividend>0;
   document.getElementById('bt-insight').textContent=
     `${startYr}년부터 ${years}년간 월 ${monthly.toLocaleString('ko-KR')}원 투자 시, `+
     `명목 수익률 +${gainRate}% (${fmtKRW(finalNominal)}). `+
     `같은 기간 누적 물가상승률 약 ${totalCpiInflation}%를 반영한 실질 가치는 ${fmtKRW(finalReal)}으로, `+
     `실질 수익률은 +${realGainRate}%입니다.`;
+
+  // 범례 업데이트
+  const legDiv=document.getElementById('bt-leg-div');
+  const legCap=document.getElementById('bt-leg-cap');
+  if(hasDivData){
+    legDiv.style.display='flex';
+    legCap.querySelector('.leg-dot').style.background='#22d87a';
+    legCap.lastChild.textContent='주가 차익';
+  } else {
+    legDiv.style.display='none';
+    legCap.querySelector('.leg-dot').style.background='#22d87a';
+    legCap.lastChild.textContent='수익 (명목)';
+  }
 
   if(btChart)btChart.destroy();
   btChart=new Chart(document.getElementById('bt-chart'),{
@@ -466,9 +614,10 @@ function calcBacktest(){
       labels,
       datasets:[
         {type:'bar',label:'원금 누계',data:principals,backgroundColor:'#2a5a3a',stack:'v',order:3},
-        {type:'bar',label:'명목 수익',data:nominals.map((n,i)=>Math.max(0,n-principals[i])),backgroundColor:'#22d87a',stack:'v',order:3},
+        {type:'bar',label:'배당 수익',data:hasDivData?divAccum:nominals.map((n,i)=>Math.max(0,n-principals[i])),backgroundColor:'#f5a623',stack:'v',order:3},
+        ...(hasDivData?[{type:'bar',label:'주가 차익',data:capGains,backgroundColor:'#22d87a',stack:'v',order:3}]:[]),
         {type:'line',label:'실질 평가금액',data:reals,borderColor:'#5b8fff',backgroundColor:'rgba(91,143,255,0.1)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#5b8fff',fill:false,order:1,yAxisID:'y'},
-        {type:'line',label:'물가상승률',data:[null,...cpiByYear.map(d=>d.cpi)],borderColor:'rgba(240,82,82,0.7)',backgroundColor:'rgba(240,82,82,0.1)',borderWidth:1.5,pointRadius:2,pointBackgroundColor:'rgba(240,82,82,0.7)',fill:false,order:2,yAxisID:'y2',borderDash:[4,3]},
+        {type:'line',label:'물가상승률',data:[null,...cpiByYear.map(d=>d.cpi)],borderColor:'rgba(240,82,82,0.7)',borderWidth:1.5,pointRadius:2,pointBackgroundColor:'rgba(240,82,82,0.7)',fill:false,order:2,yAxisID:'y2',borderDash:[4,3]},
       ]
     },
     options:{
@@ -619,6 +768,87 @@ function calcSim(){
   const gr=((total-principal)/principal*100).toFixed(0);
   const dy=rate>0?Math.round(72/(rate*100)):'∞';
   document.getElementById('insight').textContent=`${years}년 후 원금 대비 복리 수익 ${gr}%. 72의 법칙 기준 현재 수익률(${(rate*100).toFixed(1)}%)에서 투자금이 2배가 되는 데 약 ${dy}년 소요.`;
+
+  // 배당 카드
+  const e=ETFS.find(x=>x.id===selectedId);
+  const simDivCard=document.getElementById('sim-div-card');
+  const shareInfo=e&&ETF_SHARE[e.id];
+  if(e&&e.isDividend&&shareInfo){
+    simDivCard.style.display='block';
+    const divYieldData=DIV_YIELDS[e.divKey];
+    const divYieldAvg=(()=>{
+      if(!divYieldData||!divYieldData.yields)return e.rate/100*0.8;
+      return (divYieldData.yields.reduce((a,b)=>a+b,0)/divYieldData.yields.length)/100;
+    })();
+    const annualDiv=Math.round(total*divYieldAvg);
+    const monthlyDiv=Math.round(annualDiv/12);
+    document.getElementById('sim-div-annual').textContent=fmtKRW(annualDiv);
+    document.getElementById('sim-div-monthly').textContent=fmtKRW(monthlyDiv);
+
+    // 1주당 배당금 & 보유 주수
+    const isKrw=shareInfo.krw;
+    const sharePrice=isKrw?shareInfo.price:Math.round(shareInfo.price*USD_KRW);
+    const dps=isKrw?shareInfo.dps:Math.round(shareInfo.dps*USD_KRW);
+    const estimatedShares=Math.floor(total/sharePrice);
+    document.getElementById('sim-share-price').textContent=isKrw?
+      '₩'+shareInfo.price.toLocaleString('ko-KR'):
+      `$${shareInfo.price} (≈₩${sharePrice.toLocaleString('ko-KR')})`;
+    document.getElementById('sim-dps').textContent=isKrw?
+      '₩'+shareInfo.dps.toLocaleString('ko-KR')+' / '+shareInfo.freq:
+      `$${shareInfo.dps} (≈₩${dps.toLocaleString('ko-KR')}) / ${shareInfo.freq}`;
+    document.getElementById('sim-shares').textContent=estimatedShares.toLocaleString('ko-KR')+'주';
+
+    // 연도별 실제 1주당 배당금(DPS) 역사 차트
+    const dpsHistory=DPS_HISTORY[e.id];
+    if(dpsHistory&&dpsHistory.yrs.length>1){
+      const isKrwDps=dpsHistory.krw||false;
+      const dpsLabels=dpsHistory.yrs.map(y=>y+'');
+      const dpsVals=dpsHistory.dps;
+      const dpsGrowthRates=dpsVals.map((d,i)=>{
+        if(i===0)return null;
+        return parseFloat(((d-dpsVals[i-1])/dpsVals[i-1]*100).toFixed(1));
+      });
+      const unit=isKrwDps?'₩':'$';
+
+      if(divGrowthChart) divGrowthChart.destroy();
+      divGrowthChart=new Chart(document.getElementById('div-growth-chart'),{
+        type:'bar',
+        data:{
+          labels:dpsLabels,
+          datasets:[
+            {type:'bar',label:'1주당 연간 배당금',data:dpsVals,backgroundColor:'rgba(34,216,122,0.6)',borderColor:'#22d87a',borderWidth:1,borderRadius:3,yAxisID:'y',order:2},
+            {type:'line',label:'전년 대비 증가율',data:dpsGrowthRates,borderColor:'#f5a623',backgroundColor:'rgba(245,166,35,0.1)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#f5a623',fill:false,yAxisID:'y2',order:1,spanGaps:true},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{callbacks:{
+              label:ctx=>{
+                if(ctx.dataset.label==='1주당 연간 배당금')
+                  return` 1주당 배당금: ${unit}${ctx.raw.toFixed(2)}`;
+                if(ctx.raw===null) return null;
+                const sign=ctx.raw>=0?'+':'';
+                return` 전년 대비: ${sign}${ctx.raw}%`;
+              }
+            }}
+          },
+          scales:{
+            x:{ticks:{color:'#555a6b',font:{size:11}},grid:{display:false}},
+            y:{position:'left',ticks:{color:'#22d87a',font:{size:10},callback:v=>`${unit}${v.toFixed(2)}`},grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true},
+            y2:{position:'right',ticks:{color:'#f5a623',font:{size:10},callback:v=>v+'%'},grid:{display:false}}
+          }
+        }
+      });
+    } else {
+      if(divGrowthChart){divGrowthChart.destroy();divGrowthChart=null;}
+    }
+  } else {
+    simDivCard.style.display='none';
+    if(divGrowthChart){divGrowthChart.destroy();divGrowthChart=null;}
+  }
+
   if(simChart)simChart.destroy();
   simChart=new Chart(document.getElementById('sim-chart'),{
     type:'bar',
