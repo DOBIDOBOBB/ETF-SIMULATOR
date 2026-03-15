@@ -3230,7 +3230,7 @@ async function analyzeComposition(){
     }
     // 구성 완료 후 호재/악재 순차 실행 (동시 요청 방지)
     // 포트폴리오 완료 후 2초 대기 후 호재/악재 (동시 요청 방지)
-    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 2000);
+    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 4000);
 
   } catch(err) {
     console.error('Composition API error:', err);
@@ -3239,7 +3239,7 @@ async function analyzeComposition(){
     if(fallback) _drawCompositionCharts(fallback);
     if(yearLabel){ yearLabel.textContent = isKo?'📅 2024년 기준':'📅 2024 Data'; yearLabel.style.cssText="font-size:11px;color:var(--blue);padding:3px 10px;border-radius:20px;border:1.5px solid var(--blue);background:transparent;font-weight:600;"; }
     // 구성 실패해도 호재/악재는 시도 (2초 대기)
-    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 2000);
+    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 4000);
   }
 
   if(btn){ btn.textContent = isKo?'🔄 AI 최신화':'🔄 AI Update'; btn.disabled = false; }
@@ -3432,11 +3432,11 @@ async function analyzeNews(){
     if(data.type === 'error'){
       const errType = data.error?.type || '';
       if(errType === 'api_error' || errType === 'overloaded_error' || errType === 'rate_limit_error'){
-        const waitMs2 = errType === 'rate_limit_error' ? 5000 : 3000;
-        bull.textContent = isKo ? `⏳ ${waitMs2/1000}초 후 재시도...` : `⏳ Retrying in ${waitMs2/1000}s...`;
+        const waitMs2 = errType === 'rate_limit_error' ? 6000 : 3000;
+        if(bull) bull.textContent = isKo ? `⏳ ${waitMs2/1000}초 후 재시도...` : `⏳ Retrying in ${waitMs2/1000}s...`;
+        if(bear) bear.textContent = '';
         await new Promise(r => setTimeout(r, waitMs2));
-        delete newsCache[selectedId];
-        btn.disabled = false;
+        if(btn) btn.disabled = false;
         analyzeNews();
         return;
       }
