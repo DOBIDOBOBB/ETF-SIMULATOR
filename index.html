@@ -240,6 +240,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
         <span style="font-size:11px;color:var(--text3);">USD/KRW</span>
         <input type="number" id="fx-rate" value="1380" min="100" max="3000" step="10"
           style="width:60px;padding:3px 6px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:center;">
+        <span id="fx-status" style="font-size:12px;cursor:default;" title="실시간 환율 자동 적용">🔄</span>
       </div>
       <button id="theme-btn" onclick="toggleTheme()" style="padding:5px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font-size:14px;cursor:pointer;font-family:inherit;transition:all .15s;" title="다크/라이트 모드">🌙</button>
       <button id="lang-ko" class="lang-btn active" onclick="setLang('ko')">한국어</button>
@@ -1045,6 +1046,8 @@ function setLang(lang) {
   // 환율 입력칸 표시 (영어일 때만)
   const fxBox=document.getElementById('fx-box');
   if(fxBox) fxBox.style.display=lang==='en'?'flex':'none';
+  // 영어 모드 전환 시 실시간 환율 자동 조회
+  if(lang==='en') setTimeout(fetchExchangeRate, 100);
 
   // ETF 카드/상세 텍스트만 직접 업데이트 (renderGrid 호출 금지 - 이벤트 루프 방지)
   try{ if(typeof updateDetailDisplay==='function') updateDetailDisplay(); }catch(e){}
@@ -2916,6 +2919,62 @@ document.getElementById('fx-rate').addEventListener('input',()=>{
 });
 
 // =============================================
+// 실시간 환율 자동 조회 (다중 API 폴백)
+// =============================================
+async function fetchExchangeRate(){
+  const status = document.getElementById('fx-status');
+  const input  = document.getElementById('fx-rate');
+  if(!status || !input) return;
+
+  status.textContent = '⏳';
+  status.title = '환율 조회 중...';
+  status.style.color = 'var(--text3)';
+
+  const APIs = [
+    // 1순위: fawazahmed0 (GitHub CDN, 완전 무료, CORS 허용)
+    async () => {
+      const r = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json');
+      const d = await r.json();
+      return Math.round(d.usd.krw);
+    },
+    // 2순위: fawazahmed0 fallback 엔드포인트
+    async () => {
+      const r = await fetch('https://latest.currency-api.pages.dev/v1/currencies/usd.min.json');
+      const d = await r.json();
+      return Math.round(d.usd.krw);
+    },
+    // 3순위: open.er-api.com
+    async () => {
+      const r = await fetch('https://open.er-api.com/v6/latest/USD');
+      const d = await r.json();
+      if(d.result !== 'success') throw new Error('fail');
+      return Math.round(d.rates.KRW);
+    },
+  ];
+
+  for(const api of APIs){
+    try {
+      const rate = await api();
+      if(rate > 500 && rate < 5000){ // 합리적인 환율 범위 검증
+        input.value = rate;
+        USD_KRW = rate;
+        input.dispatchEvent(new Event('input'));
+        const now = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
+        status.textContent = '✅';
+        status.title = `실시간 환율 (${now}) — ${rate.toLocaleString()}원`;
+        status.style.color = 'var(--green)';
+        return;
+      }
+    } catch(e) { /* 다음 API 시도 */ }
+  }
+
+  // 모든 API 실패 시 경고만 표시 (기존 값 유지)
+  status.textContent = '⚠️';
+  status.title = '자동 조회 실패 — 직접 입력하세요';
+  status.style.color = 'var(--amber)';
+}
+
+// =============================================
 // US Tax Calculator (English mode)
 // =============================================
 let usAccountType='taxable', usHolding='long';
@@ -3188,7 +3247,7 @@ async function analyzeComposition(){
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true'},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -3417,7 +3476,7 @@ async function analyzeNews(){
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true'},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
