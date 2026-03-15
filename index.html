@@ -2629,7 +2629,7 @@ function renderComposition(){
   if(staticData) _drawCompositionCharts(staticData);
 
   // 자동으로 AI 최신화 실행
-  analyzeComposition();
+
 }
 
 const ETFS=[
@@ -2738,8 +2738,8 @@ const ETFS=[
     rets:[10,3,8,-49,66,21,-7,20,42,28,-6,37,38,-8,60,55,41,-35,64.8,22.9,40.7],
     tags:[{t:'AI 핵심',c:'tp'},{t:'연평균 ~20%+',c:'tg'},{t:'높은 위험',c:'tr'}]},
   {id:'botz',cat:'theme',ticker:'BOTZ / ROBO',name:'AI·로봇공학 ETF',desc:'AI 소프트웨어·자율주행·산업로봇 묶음.',risk:'높은 위험',rc:'risk-high',r30:'N/A',r20:'N/A',r10:'약 10%',dd:'-40.0%',rate:12,note:'Global X Robotics & AI ETF 기준',isDividend:false,
-    yrs:['-','-','-','-','-','-','-','-','-','-','-',2016,2017,2018,2019,2020,2021,2022,2023,2024],
-    rets:[0,0,0,0,0,0,0,0,0,0,0,8,57,-11,35,47,22,-39,40,18],
+    yrs:['-','-','-','-','-','-','-','-','-','-','-',2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],
+    rets:[0,0,0,0,0,0,0,0,0,0,0,8,57,-11,35,47,22,-39,40,18,22.0],
     tags:[{t:'AI 테마',c:'tp'},{t:'장기 성장',c:'tb'},{t:'높은 위험',c:'tr'}]},
   {id:'arkk',cat:'theme',ticker:'ARKK',name:'ARK 혁신 ETF',desc:'파괴적 혁신 기업. 2020년 폭등 후 -75% 경험.',risk:'매우 높은 위험',rc:'risk-vhigh',r30:'N/A',r20:'N/A',r10:'약 2%',dd:'-75.0%',rate:5,note:'ARK Innovation ETF 기준',isDividend:false,
     yrs:['-','-','-','-','-','-','-','-','-','-',2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],
@@ -4453,7 +4453,7 @@ async function analyzeComposition(){
         // 재귀 재시도 (1회만)
         delete compAiCache[selectedId]; // 캐시 초기화 후 재시도 방지 안 되게
         if(btn){ btn.disabled = false; }
-        analyzeComposition();
+      
         return;
       }
       throw new Error('Empty response from API: ' + JSON.stringify(data));
@@ -4475,7 +4475,7 @@ async function analyzeComposition(){
     }
     // 구성 완료 후 호재/악재 순차 실행 (동시 요청 방지)
     // 포트폴리오 완료 후 2초 대기 후 호재/악재 (동시 요청 방지)
-    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 4000);
+
 
   } catch(err) {
     console.error('Composition API error:', err);
@@ -4484,7 +4484,7 @@ async function analyzeComposition(){
     if(fallback) _drawCompositionCharts(fallback);
     if(yearLabel){ yearLabel.textContent = isKo?'📅 2026.03 기준':'📅 Mar 2026 Data'; yearLabel.style.cssText="font-size:11px;color:var(--blue);padding:3px 10px;border-radius:20px;border:1.5px solid var(--blue);background:transparent;font-weight:600;"; }
     // 구성 실패해도 호재/악재는 시도 (2초 대기)
-    if(!newsCache[selectedId]) setTimeout(()=>analyzeNews(), 4000);
+
   }
 
   if(btn){ btn.textContent = isKo?'🔄 AI 최신화':'🔄 AI Update'; btn.disabled = false; }
@@ -4585,8 +4585,6 @@ async function analyzeNews(){
   // 로딩
   const isKo = currentLang === 'ko';
   if(btn){ btn.textContent = isKo ? '⏳ AI 분석 중...' : '⏳ Analyzing...'; btn.disabled = true; }
-  bull.textContent = isKo ? 'AI가 분석 중입니다...' : 'AI is analyzing...';
-  bear.textContent = isKo ? 'AI가 분석 중입니다...' : 'AI is analyzing...';
   histDiv.style.display = 'none';
 
   const etfName = etfField(e, 'ticker') + ' (' + etfField(e, 'name') + ')';
@@ -4642,7 +4640,6 @@ async function analyzeNews(){
         if(bear) bear.textContent = '';
         await new Promise(r => setTimeout(r, waitMs2));
         if(btn) btn.disabled = false;
-        analyzeNews();
         return;
       }
       throw new Error('Empty response from API: ' + JSON.stringify(data));
